@@ -42,6 +42,8 @@ class Scheduler{
 		unsigned getTimebase();
 		unsigned getTime(uint8_t);
 		void setTimes(unsigned long [], unsigned);
+		bool getEventState(uint8_t order, int nt);
+		bool setEventState(uint8_t order, bool state, int nt);
 };
 
 #endif
