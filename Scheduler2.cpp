@@ -92,6 +92,27 @@ bool Scheduler::addEvent(PEventCallback pevnt, uint8_t priority, int nt){// peri
 	return ok;
 }
 
+bool Scheduler::getEventState(uint8_t order, int nt){
+	bool ok = false;
+	int pos; 
+	
+	if(nt >= 0 && nt < ntimes+1){
+		pos = cerca(order,events[nt],fe[nt]);
+		if(pos >= 0 && pos < fe[nt]){// check if enabled for first
+			ok = events[nt][pos]->enabled;
+		}
+	}
+	return ok;
+}
+
+bool Scheduler::setEventState(uint8_t order, bool state, int nt){
+	if(state){
+		enableEvent(order, nt);
+	}else{
+		disableEvent(order, nt);
+	}
+}
+
 bool Scheduler::disableEvent(uint8_t order, int nt){// call as needed everywhere on runtime
 	bool ok = false;
 	int pos; 
