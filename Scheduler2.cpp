@@ -1,5 +1,4 @@
 #include "Scheduler2.h"
-#define nsteps          12000        // numero di fasi massimo di un periodo generico
 
 PeriodicEvnt::PeriodicEvnt(PEventCallback evnt, uint8_t priority, bool enbld){
 	order = priority;
@@ -7,12 +6,13 @@ PeriodicEvnt::PeriodicEvnt(PEventCallback evnt, uint8_t priority, bool enbld){
 	enabled = enbld;
 }
 
-Scheduler::Scheduler(unsigned long timeList[], unsigned ntimes){
+Scheduler::Scheduler(unsigned long timeList[], unsigned ntimes, unsigned long maxnsteps){
 	if(ntimes < NTIMES){
 		this->ntimes = ntimes;
 		setTimes(timeList, ntimes);
 		prec=0;
 		step=0;
+		nstep = maxnsteps;
 		memset(fe, 0, NTIMES);// number of events for times
 		memset(enabled, 0, NTIMES);// number of enabled events for times
 		for(int i=0; i<ntimes; i++){
