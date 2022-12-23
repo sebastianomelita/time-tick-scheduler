@@ -28,13 +28,14 @@ class Scheduler{
 		unsigned long prec=0;
 		volatile unsigned long step;
 		int gcd(int, int);
+		unsigned long nstep;
 		unsigned findGCD(unsigned long [], uint8_t);
 		void sort(PeriodicEvnt **, uint8_t);
 		void scambia(PeriodicEvnt **, PeriodicEvnt **);
 		int cerca(uint8_t, PeriodicEvnt **, int);
 
 	public:
-		Scheduler(unsigned long [], unsigned);
+		Scheduler(unsigned long [], unsigned, unsigned long);
 		bool addEvent(PEventCallback , uint8_t, int);
 		bool enableEvent(uint8_t, int);
 		bool disableEvent(uint8_t, int);
