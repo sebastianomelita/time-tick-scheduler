@@ -6,13 +6,13 @@ PeriodicEvnt::PeriodicEvnt(PEventCallback evnt, uint8_t priority, bool enbld){
 	enabled = enbld;
 }
 
-Scheduler::Scheduler(unsigned long timeList[], unsigned ntimes, unsigned long maxnsteps){
+Scheduler::Scheduler(unsigned long timeList[], unsigned ntimes){
 	if(ntimes < NTIMES){
 		this->ntimes = ntimes;
 		setTimes(timeList, ntimes);
 		prec=0;
 		step=0;
-		nstep = maxnsteps;
+		maxstepCalc();
 		memset(fe, 0, NTIMES);// number of events for times
 		memset(enabled, 0, NTIMES);// number of enabled events for times
 		for(int i=0; i<ntimes; i++){
@@ -32,12 +32,15 @@ void Scheduler::setTimes(unsigned long timeList[], unsigned ntimes){
 	tbase = findGCD(timeList, tlen);
 	for(int i=0; i < tlen; i++){
 		steplist[i] = timeList[i] / tbase; 
-		Serial.println(steplist[i]);
 	}
 }
 
 unsigned Scheduler::getTimebase(){
 	return tbase;
+}
+
+unsigned long Scheduler::getNsteps(){
+	return nsteps;
 }
 
 void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
@@ -201,5 +204,14 @@ int Scheduler::cerca(uint8_t order, PeriodicEvnt **list,int pempty){
        med=-1;
    }
    return med;
+}
+
+void Scheduler::maxstepCalc(){
+	Scheduler::nsteps = steplist[0];
+	for(int i=1; i<ntimes; i++) {
+		if(nsteps < steplist[i]){
+			nsteps = steplist[i]+1;
+		}
+	}
 }
 //END HELPER FUNCTIONS---------------------------------------------------------------------------------------------
