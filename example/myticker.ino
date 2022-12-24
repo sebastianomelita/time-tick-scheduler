@@ -7,7 +7,7 @@
 int led1 = 13;
 int led2 = 12;
 unsigned long list[] = {500,1000,10000,20000};
-Scheduler scheduler(list,4,25000);
+Scheduler scheduler(list,4);
 int count = 0;
 
 void onMaxSpeedEvents();
@@ -55,6 +55,8 @@ void setup() {
 	Serial.println(F("Scheduler init"));
 	Serial.print(F("Time base: "));
 	Serial.println(scheduler.getTimebase());
+	Serial.print(F("Nsteps: "));
+	Serial.println(scheduler.getNsteps());
 	//scheduler.addEvent(onMaxSpeedEvents, 1, ON0MSEC);
 	scheduler.addEvent(onHalfSecondEvents, 1, ON500MS);
 	scheduler.addEvent(onSecondEvents, 1, ON1000MS);
