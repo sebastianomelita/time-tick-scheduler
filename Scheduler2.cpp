@@ -48,10 +48,9 @@ void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 	for(int j=0; j < enabled[0]; j++){// only the first time
 		(*events[0][j]->pevent)();// event callback function call
 	}
-	unsigned long currMillis = millis();
-	unsigned long diff = currMillis-prec;
+	unsigned long diff = millis()-prec;
 	if(diff > tbase){ //schedulatore per tempo base 
-		prec = currMillis;
+		prec += diff;
 		if(diff > 2*tbase){// right timeslot elapsed
 			unsigned long ofst = diff/tbase;// right timeslot search
 			step = (step + ofst) % nsteps;// right timeslot placing
