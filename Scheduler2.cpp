@@ -207,7 +207,7 @@ int Scheduler::cerca(uint8_t order, PeriodicEvnt **list,int pempty){
 }
 
 void Scheduler::maxstepCalc(){
-	Scheduler::nsteps = steplist[0];
+	nsteps = steplist[0];
 	for(int i=1; i<ntimes; i++) {
 		if(nsteps < steplist[i]){
 			nsteps = steplist[i]+1;
