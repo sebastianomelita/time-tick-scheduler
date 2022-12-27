@@ -1,38 +1,52 @@
 #include "Scheduler2.h"
 
-PeriodicEvnt::PeriodicEvnt(PEventCallback evnt, uint8_t priority, bool enbld){
-	order = priority;
-	pevent = evnt;
-	enabled = enbld;
-}
-
-Scheduler::Scheduler(unsigned long timeList[], unsigned ntimes){
-	if(ntimes < NTIMES){
-		this->ntimes = ntimes;
-		setTimes(timeList, ntimes);
-		prec=0;
-		step=0;
-		maxstepCalc();
-		memset(fe, 0, NTIMES);// number of events for times
-		memset(enabled, 0, NTIMES);// number of enabled events for times
-		for(int i=0; i<ntimes; i++){
-			memset(events[i], NULL, NEVENTS);
-		}
-	}else{
-		Serial.println("ERRORE: Numero di tempi eccessivo");
+void AsyncEvntB::doEvent(unsigned long step){
+	counter += step; // aggiorna il contatore della durata della temporizzazione
+	if(!(step % (interval/step))){ // si attiva ad ogni interval
+		(*pevent)();
 	}
-}
-
-unsigned Scheduler::getTime(uint8_t n){
-	return steplist[n];
-}
-
-void Scheduler::setTimes(unsigned long timeList[], unsigned ntimes){
-	tlen = ntimes;
-	tbase = findGCD(timeList, tlen);
-	for(int i=0; i < tlen; i++){
-		steplist[i] = timeList[i] / tbase; 
+	if(counter >= duration){ // disabilita le ripetizioni temporizzate
+		counter = 0;
+		static_cast<Scheduler*>(sch)->disableEvent(order,time); // disabilita se stesso
+		order = order + DISABLED;
 	}
+	if(periodic){
+		static_cast<Scheduler*>(sch)->enableEvent(slaveOrder,slaveTime); // abilita il suo master (ripetizioni temporizzate)
+		slaveOrder = slaveOrder - DISABLED;
+	}
+};
+
+void AsyncEvntA::doEvent(unsigned long step){
+	static_cast<Scheduler*>(sch)->enableEvent(slaveOrder,slaveTime); // abilita il suo slave (ripetizioni temporizzate)
+	slaveOrder = slaveOrder - DISABLED;
+	static_cast<Scheduler*>(sch)->disableEvent(order,time); 			// disabilita se stesso
+	order = order + DISABLED;
+};
+
+Scheduler::Scheduler(){
+	prec=0;
+	step=0;
+	nt = 1;
+}
+
+long Scheduler::getTime(unsigned long when){
+	unsigned t = -1;
+	int p = timeSearch(when, tasks, nt);
+	if(p >= 0){
+		t = tasks[p].step;
+	}
+	return t;
+}
+
+void Scheduler::setTimes(){
+	tbase = findGCD();
+	//Serial.print("tbase: ");Serial.println(tbase);
+	for(int i=0; i < nt; i++){
+		tasks[i].step = tasks[i].time / tbase; 
+		//Serial.print("step: ");Serial.println(tasks[i].step);
+	}
+	maxstepCalc();
+	
 }
 
 unsigned Scheduler::getTimebase(){
@@ -44,9 +58,11 @@ unsigned long Scheduler::getNsteps(){
 }
 
 void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
+	bool go = false;
+	
 	// max speed scheduled events
-	for(int j=0; j < enabled[0]; j++){// only the first time
-		(*events[0][j]->pevent)();// event callback function call
+	for(int j=0; j < tasks[0].enabled; j++){// only the first time
+		(*tasks[0].events[j]->pevent)();// event callback function call
 	}
 	unsigned long diff = millis()-prec;
 	if(diff > tbase){ //schedulatore per tempo base 
@@ -58,18 +74,18 @@ void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 			step = (step + 1) % nsteps;
 		}
 		// variely timed scheduled events
-		for(int i=1; i < tlen+1; i++){// all times except the first
+		for(int i=1; i < nt; i++){// all times except the first
+			//Serial.println("------------------------------------------");
+			//Serial.print("i: ");Serial.println(i);
 			//Serial.print("Steplist: ");
-			//Serial.print(steplist[i-1]);
-			if(!(step % steplist[i-1])){
+			//Serial.println(tasks[i].step);
+			if(!(step % tasks[i].step)){
 				//Serial.println(" si");
-				for(int j=0; j < enabled[i]; j++){
+				//Serial.println("++++++++++++++++++++++++++++++++++++++");
+				for(int j=0; j < tasks[i].enabled; j++){
 					//Serial.print(" j: ");
-					//Serial.print(j);
-					if(events[i][j] != NULL){//protezione del valore
-						//Serial.println(" do");
-						(*events[i][j]->pevent)();// event callback function call
-					}
+					//Serial.println(j);
+					tasks[i].events[j]->doEvent(step);// event callback function call	
 				}
 			}else{
 				//Serial.println(" no");
@@ -77,114 +93,8 @@ void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 		}
 	}
 }
-// nt: event index. 0:max_speed, 1:first_time_scheduled, 2:second_time_scheduled,...
-bool Scheduler::addEvent(PEventCallback pevnt, uint8_t priority, int nt){// periodic events reggistration. Place this in setup().
-	bool ok = false;
-	
-	if(nt >= 0 && nt < ntimes+1){
-		if(fe[nt] < NEVENTS){
-			events[nt][fe[nt]] = new PeriodicEvnt(pevnt, priority, true);// default enabled
-			fe[nt]++;// first empty
-			enabled[nt]++;// default enabled
-			sort(events[nt], fe[nt]);// sort by priority
-			ok = true;
-		}
-	}else{
-		Serial.println("ERRORE: indice di un tempo fuori range");
-	}
-	return ok;
-}
 
-bool Scheduler::getEventState(uint8_t order, int nt){
-	bool ok = false;
-	int pos; 
-	
-	if(nt >= 0 && nt < ntimes+1){
-		pos = cerca(order,events[nt],fe[nt]);
-		if(pos >= 0 && pos < fe[nt]){// check if enabled for first
-			ok = events[nt][pos]->enabled;
-		}
-	}
-	return ok;
-}
-
-bool Scheduler::setEventState(uint8_t order, bool state, int nt){
-	if(state){
-		enableEvent(order, nt);
-	}else{
-		disableEvent(order, nt);
-	}
-}
-
-bool Scheduler::disableEvent(uint8_t order, int nt){// call as needed everywhere on runtime
-	bool ok = false;
-	int pos; 
-	
-	if(nt >= 0 && nt < ntimes+1){
-		pos = cerca(order,events[nt],fe[nt]);
-		if(pos >= 0 && pos < fe[nt] && events[nt][pos]->enabled){// check if enabled for first
-			events[nt][pos]->enabled = false;
-			events[nt][pos]->order = events[nt][pos]->order + DISABLED;
-			sort(events[nt], fe[nt]);// place disabled on greatest order zone
-			enabled[nt]--;
-			ok = true;
-		}
-	}
-	return ok;
-}
-
-bool Scheduler::enableEvent(uint8_t order, int nt){// call as needed everywhere on runtime
-	bool ok = false;
-	int pos; 
-	
-	if(nt >= 0 && nt < ntimes+1){
-		pos = cerca(order + DISABLED,events[nt],fe[nt]);
-		//Serial.print("pos ");Serial.println(pos);		
-		if(pos >= 0 && pos < fe[nt] && !events[nt][pos]->enabled){// check if disabled for first
-			events[nt][pos]->enabled = true;
-			events[nt][pos]->order = events[nt][pos]->order - DISABLED;
-			sort(events[nt], fe[nt]);// place enabled on lower order zone
-			enabled[nt]++;
-			ok = true;
-		}
-	}
-	return ok;
-}
-//HELPER FUNCTIONS---------------------------------------------------------------------------------------------
-int Scheduler::gcd(int a, int b)
-{
-  if (a == 0)
-    return b;
-  return gcd(b % a, a);
-}
-
-unsigned Scheduler::findGCD(unsigned long arr[], uint8_t n){
-  unsigned result = arr[0];
-  for (uint8_t i = 1; i < n; i++)
-  {
-    result = gcd(arr[i], result);
-  }
-  return result;
-}
-
-void Scheduler::sort(PeriodicEvnt **evnts, uint8_t fe){
-    int i,j;
-	for(i=fe-1; i>=0; i--) {
-        for(j=0; j<i; j++){
-            if(evnts[j]->order > evnts[j+1]->order){
-              scambia(&evnts[j], &evnts[j+1]);
-            }  
-        }
-    }   
-}
-
-void Scheduler::scambia(PeriodicEvnt **a,PeriodicEvnt **b){
-    PeriodicEvnt* c=*a;
-    *a=*b;
-    *b=c;
-}
-
-int Scheduler::cerca(uint8_t order, PeriodicEvnt **list,int pempty){
+int TCB::cerca(uint8_t order, Evnt **list,int pempty){
    int min=0;
    int max=pempty-1;
    int med;
@@ -206,12 +116,246 @@ int Scheduler::cerca(uint8_t order, PeriodicEvnt **list,int pempty){
    return med;
 }
 
-void Scheduler::maxstepCalc(){
-	nsteps = steplist[0];
-	for(int i=1; i<ntimes; i++) {
-		if(nsteps < steplist[i]){
-			nsteps = steplist[i]+1;
+void TCB::sort(Evnt **evnts, uint8_t fe){
+    int i,j;
+	for(i=fe-1; i>=0; i--) {
+        for(j=0; j<i; j++){
+            if(evnts[j]->order > evnts[j+1]->order){
+              scambia(&evnts[j], &evnts[j+1]);
+			  // ogni oggetto deve sapere il suo indice
+			  //evnts[j]->pos = j;		
+			  //evnts[j+1]->pos = j+1;
+            }  
+        }
+    }   
+}
+
+void TCB::scambia(Evnt **a, Evnt **b){
+    Evnt* c=*a;
+    *a=*b;
+    *b=c;
+}
+
+bool TCB::addEvent(Evnt *evnt){
+	bool ok = false;
+	if(fe < NEVENTS){
+		//evnt->pos = fe;
+		events[fe] = evnt;// default enabled
+		fe++;// first empty
+		if(evnt->enabled){
+			enabled++; // counter of enabled increment
+		}
+		sort(events, fe);// sort by priority
+		ok = true;
+	}
+	return ok;
+}
+
+bool TCB::getEventState(uint8_t order){
+	bool ok = false;
+	int pos = cerca(order,events,fe);
+	if(pos >= 0){
+		ok = events[pos]->enabled;
+	}
+	return ok;
+}
+
+bool TCB::enableEvent(uint8_t order){
+	bool ok = false;
+	int pos = cerca(order + DISABLED,events,fe);
+	//Serial.print("pos ");Serial.println(pos);		
+	if(pos >= 0 && !events[pos]->enabled){// check if disabled for first
+		events[pos]->enabled = true;
+		events[pos]->order = events[pos]->order - DISABLED;
+		sort(events, fe);// place enabled on lower order zone
+		enabled++;
+		ok = true;
+	}
+	return ok;
+}
+
+bool TCB::disableEvent(uint8_t order){
+	bool ok = false;
+	int pos = cerca(order,events,fe);
+	if(pos >= 0 && events[pos]->enabled){// check if enabled for first
+		events[pos]->enabled = false;
+		events[pos]->order = events[pos]->order + DISABLED;
+		sort(events, fe);// place disabled on greatest order zone
+		enabled--;
+		ok = true;
+	}
+	return ok;
+}
+
+int Scheduler::addTime(unsigned long when){
+	int p = -1;
+	
+	if(when==0){
+		p=0;
+	}else{
+		p = timeSearch(when, tasks, nt);
+	}
+	
+	if(p<0){ // se non lo trova
+		if(nt < NTIMES){
+			tasks[nt].time = when; // lo inserisce
+			nt++;
+			timeSort(tasks, nt); // ordina
+			p = timeSearch(when, tasks, nt);
 		}
 	}
+	return p;
+}
+
+// nt: event index. 0:max_speed, 1:first_time_scheduled, 2:second_time_scheduled,...
+bool Scheduler::addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigned long when){// periodic events reggistration. Place this in setup().
+	bool ok = true;
+	
+	int p = addTime(when);
+	if(p>=0){
+		//Serial.print("when: ");Serial.println(when);
+		//Serial.print("p add: ");Serial.println(p);
+		if(tasks[p].addEvent(new PeriodicEvnt(this, when, pevnt, priority, true, PERIODIC))){
+			setTimes();
+		}
+	}else{
+		ok = false;
+		Serial.println("ERRORE: indice di un tempo fuori range");
+	}
+	/*
+	for(int i=0; i<nt; i++) {
+		Serial.println(tasks[i].time);
+	}
+	*/
+	return ok;
+}
+
+bool Scheduler::addAsyncEvent(PEventCallback pevnt, uint8_t priority, unsigned long when, unsigned long howlong, unsigned long every, bool repeat){// periodic events reggistration. Place this in setup().
+	bool ok = true;
+	
+	int p = addTime(when);
+	if(p>=0){
+		//Serial.print("when: ");Serial.println(when);
+		//Serial.print("p add: ");Serial.println(p);
+		AsyncEvntB *slave = new AsyncEvntB(this, howlong, when, priority, pevnt, priority, false, ASYNC_B, howlong, every, repeat);
+		AsyncEvntA *master = new AsyncEvntA(this, when, howlong, priority, pevnt, priority, true, ASYNC_A, howlong, every, repeat);
+		if(tasks[p].addEvent(master)){
+			setTimes();
+		}
+		int p = addTime(every);
+		if(p>=0){
+			tasks[p].addEvent(slave); // add async event as disabled
+			setTimes();
+		}
+	}else{
+		ok = false;
+		Serial.println("ERRORE: indice di un tempo fuori range");
+	}
+	/*
+	for(int i=0; i<nt; i++) {
+		Serial.println(tasks[i].time);
+	}
+	*/
+	return ok;
+}
+
+bool Scheduler::getEventState(uint8_t order, unsigned long when){
+	bool ok = false;
+	int pos; 
+	
+	int p = timeSearch(when, tasks, nt);
+	if(p >= 0){
+		tasks[p].getEventState(order);
+	}
+	return ok;
+}
+
+bool Scheduler::setEventState(uint8_t order, bool state, unsigned long when){
+	if(state){
+		enableEvent(order,when);
+	}else{
+		disableEvent(order, when);
+	}
+}
+
+bool Scheduler::disableEvent(uint8_t order, unsigned long when){// call as needed everywhere on runtime
+	bool ok = false;
+	int p = timeSearch(when, tasks, nt);
+	if(p >= 0){
+		tasks[p].disableEvent(order);
+	}
+	return ok;
+}
+
+bool Scheduler::enableEvent(uint8_t order, unsigned long when){// call as needed everywhere on runtime
+	bool ok = false;
+	int p = timeSearch(when, tasks, nt);
+	if(p >= 0){
+		tasks[p].enableEvent(order);
+	}
+	return ok;
+}
+//HELPER FUNCTIONS---------------------------------------------------------------------------------------------
+int Scheduler::gcd(int a, int b)
+{
+  if (a == 0)
+    return b;
+  return gcd(b % a, a);
+}
+
+unsigned Scheduler::findGCD(){
+  unsigned result = tasks[1].time;
+  for (uint8_t i = 2; i < nt; i++)
+  {
+    result = gcd(tasks[i].time, result);
+  }
+  return result;
+}
+
+int Scheduler::timeSearch(unsigned long tosearch, TCB* list, int pempty){
+   int min=0;
+   int max=pempty-1;
+   int med;
+   
+   while(min<=max){
+       med=(min+max)/2;
+       if(tosearch < list[med].time){
+           max=med-1;
+       }else if(tosearch > list[med].time){
+           min=med+1;
+       }else{
+           min=max+1;
+       }
+   }
+   if(tosearch != list[med].time){
+       med=-1;
+   }
+   return med;
+}
+
+void Scheduler::timeSort(TCB* list, uint8_t fe){
+    int i,j;
+	for(i=fe-1; i>=0; i--) {
+        for(j=0; j<i; j++){
+            if(list[j].time > list[j+1].time){
+              TCB app = list[j];
+			  list[j] = list[j+1];
+			  list[j+1] = app;
+			  // ogni oggetto deve sapere il suo indice
+			  //list[j].pos = j;
+			  //list[j+1].pos = j+1;
+            }  
+        }
+    }   
+}
+
+void Scheduler::maxstepCalc(){
+	nsteps = tasks[1].step;
+	for(int i=2; i<nt; i++) {
+		if(nsteps < tasks[i].step){
+			nsteps = tasks[i].step;
+		}
+	}
+	nsteps = nsteps +1; 
 }
 //END HELPER FUNCTIONS---------------------------------------------------------------------------------------------
