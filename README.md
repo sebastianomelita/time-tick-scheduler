@@ -6,8 +6,8 @@ Simulazione su ESP32 con Wokwi di un esempio di schedulazione periodica: https:/
 
 Simulazione su ESP32 con Wokwi di un esempio di timer asincrono: https://wokwi.com/projects/352243906494838785
 
-
-    Scheduler();
+		
+    		```C++	Scheduler()```
 		bool addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigned long when);
 		bool addAsyncEvent(PEventCallback pevnt, uint8_t priority, unsigned long when, unsigned long howlong, unsigned long every, bool repeat);
 		void scheduleAll();
