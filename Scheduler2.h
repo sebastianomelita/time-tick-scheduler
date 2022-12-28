@@ -7,7 +7,7 @@
 #define PERIODIC 0
 #define ASYNC_A	 1
 #define ASYNC_B	 2
-
+#define DISABLED	128
 // https://en.wikibooks.org/wiki/Computer_Science_Design_Patterns/Mediator
 //per disaccoppiare Scheduler e gli eventi è necessario far derivare entrambi 
 //da genitori che non hanno riferimenti incrociati (pattern mediatore).
@@ -15,7 +15,7 @@
 //realizzare un late binding con un metodo virtuale
 
 using PEventCallback = void (*)(); //type aliasing
-#define DISABLED	128
+
 
 class Sched{
 	public:
