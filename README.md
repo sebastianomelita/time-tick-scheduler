@@ -21,7 +21,7 @@ Simulazione su ESP32 con Wokwi di un esempio di **timer asincrono**: https://wok
 	- ```when```: slot temporale in cui l'evento comincia. La funzione definisce un nuovo slot se non ne esiste uno con un tempo uguale, oppure si limita ad associare l'evento ad uno slot esistente.
 	- ```howlong```: quanto tempo dura la schedulazione
 	- ```every```: slot temporale in cui l'evento deve essere ripetuto. La funzione definisce un nuovo slot se non ne esiste uno con un tempo uguale, oppure si limita ad associare l'evento ad uno slot esistente.
-- **```void scheduleAll()```**. Esegue tutti i task
+- **```void scheduleAll()```**. Esegue tutti i task. Da inserire nel loop() o in una callback richiamata ad intervalli regolari (interrupt).
 - **```unsigned getTimebase()```**. Restituisce il tempo base dei time tick.
 - **```unsigned long getNsteps()```**. Restituisce il massimo valore del conteggio circolare dei time tick.
 - **```long getTime(unsigned long when)```**. Restituisce il conteggio in time tick del tempo fornito come parametro.
