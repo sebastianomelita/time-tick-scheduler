@@ -6,7 +6,7 @@ Simulazione su ESP32 con Wokwi di un esempio di schedulazione periodica: https:/
 
 Simulazione su ESP32 con Wokwi di un esempio di timer asincrono: https://wokwi.com/projects/352243906494838785
 
-		
+Metodi della classe ```Scheduler()```:		
     		
 - ```Scheduler()``` Costruttore
 - ```bool addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigned long when)```. Aggiunge un evento periodico definito da:
