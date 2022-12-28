@@ -164,9 +164,9 @@ bool TCB::getEventState(uint8_t order){
 bool TCB::enableEvent(uint8_t order){
 	bool ok = false;
 	int pos = cerca(order + DISABLED,events,fe);
-	Serial.print("pos ");Serial.println(pos);		
+	//Serial.print("pos ");Serial.println(pos);		
 	if(pos >= 0 && !events[pos]->enabled){// check if disabled for first
-		Serial.print("Enable made ");Serial.println(pos);	
+		//Serial.print("Enable made ");Serial.println(pos);	
 		events[pos]->enabled = true;
 		events[pos]->order = events[pos]->order - DISABLED;
 		sort(events, fe);// place enabled on lower order zone
@@ -179,9 +179,9 @@ bool TCB::enableEvent(uint8_t order){
 bool TCB::disableEvent(uint8_t order){
 	bool ok = false;
 	int pos = cerca(order,events,fe);
-	Serial.print("pos ");Serial.println(pos);	
+	//Serial.print("pos ");Serial.println(pos);	
 	if(pos >= 0 && events[pos]->enabled){// check if enabled for first
-		Serial.print("Dis made ");Serial.println(pos);	
+		//Serial.print("Dis made ");Serial.println(pos);	
 		events[pos]->enabled = false;
 		events[pos]->order = events[pos]->order + DISABLED;
 		sort(events, fe);// place disabled on greatest order zone
@@ -284,7 +284,7 @@ bool Scheduler::setEventState(uint8_t order, bool state, unsigned long when){
 bool Scheduler::disableEvent(uint8_t order, unsigned long when){// call as needed everywhere on runtime
 	bool ok = false;
 	int p = timeSearch(when, tasks, nt);
-	Serial.print("dis time pos: ");Serial.println(p);
+	//Serial.print("dis time pos: ");Serial.println(p);
 	if(p >= 0){
 		tasks[p].disableEvent(order);
 	}
