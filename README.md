@@ -2,7 +2,7 @@
 
 Schedulatore di compiti basato sui [time tick](https://github.com/sebastianomelita/ArduinoBareMetal/blob/master/tasksched.md)
 
-Scegliere i vari tempi in gioco in maniera opportuna, tale da consentire un agevole calcolo automatico sia del tempo base (in modo che non risulti troppo piccolo) sia dei contatori sentinella degli eventi (multipli del tempo base).
+Scegliere i vari tempi in gioco in maniera opportuna, tale da consentire un agevole calcolo automatico sia del **tempo base** (in modo che non risulti troppo piccolo) sia dei **contatori sentinella** dei time tick degli eventi (multipli del tempo base).
 
 Il **tempo base** dei time tick() è scelto automaticamente calcolando il **massimo comune divisore** dei vari tempi in gioco.
 
@@ -10,7 +10,7 @@ Simulazione su ESP32 con Wokwi di un esempio di schedulazione periodica: https:/
 
 Simulazione su ESP32 con Wokwi di un esempio di timer asincrono: https://wokwi.com/projects/352243906494838785
 
-Metodi della classe ```Scheduler()```:		
+**Metodi** della classe ```**Scheduler()**```:		
     		
 - ```Scheduler()``` Costruttore
 - ```bool addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigned long when)```. Aggiunge un evento periodico definito da:
