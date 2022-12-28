@@ -29,6 +29,7 @@ class Evnt{
 		bool enabled;
 		bool tochange;
 		uint8_t type;
+		uint8_t id;
 		//uint8_t pos;
 		unsigned long time;
 		unsigned long counter;
@@ -37,12 +38,10 @@ class Evnt{
 			time = when;
 			sch = s;
 			pevent = x;
+			id = priority;
 			order = priority;
 			enabled = enable;
 			type = etype;
-			if(enabled == false){
-				order = order + DISABLED;
-			}
 			counter = 0;
 		};
 		virtual void doEvent(unsigned long step);	//late binding
@@ -52,15 +51,16 @@ class Evnt{
 class PeriodicEvnt: public Evnt{
 	public:
 		void doEvent(unsigned long step){
-			(*pevent)();
+			if(pevent != NULL)
+				(*pevent)();
 		};
 		PeriodicEvnt(Sched *x, unsigned long y, PEventCallback z, uint8_t u, bool v, uint8_t t):Evnt(x,y,z,u,v,t){};
 };
-
+/*
 class AsyncEvntA: public Evnt{
 	public:
 		unsigned long slaveTime;
-		uint8_t slaveOrder;
+		uint8_t slaveId;
 		unsigned long duration;
 		unsigned long interval;
 		bool periodic;
@@ -71,14 +71,14 @@ class AsyncEvntA: public Evnt{
 			interval = every; 
 			periodic = repeat; 
 			slaveTime = z;
-			slaveOrder = m;
+			slaveId = m;
 		};
 };
-
+*/
 class AsyncEvntB: public Evnt{
 	public:
 		unsigned long slaveTime;
-		uint8_t slaveOrder;
+		uint8_t slaveId;
 		unsigned long duration;
 		unsigned long interval;
 		bool periodic;
@@ -89,7 +89,7 @@ class AsyncEvntB: public Evnt{
 			interval = every; 
 			periodic = repeat; 
 			slaveTime = z;
-			slaveOrder = m;
+			slaveId = m;
 		};
 };
 
