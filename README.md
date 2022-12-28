@@ -1,6 +1,6 @@
 # time-tick-scheduler
 
-Schedulatore di compiti basato sui [time tick](https://github.com/sebastianomelita/ArduinoBareMetal/blob/master/tasksched.md#SCHEDULATORE-DI-COMPITI-BASATO-SUL CONTEGGIO-DEI-TICK)
+Schedulatore di compiti basato sui [time tick](https://github.com/sebastianomelita/ArduinoBareMetal/blob/master/tasksched.md)
 
 Simulazione su ESP32 con Wokwi di un esempio di schedulazione periodica: https://wokwi.com/projects/352057010320512001
 
