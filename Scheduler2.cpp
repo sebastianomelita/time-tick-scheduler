@@ -243,7 +243,7 @@ bool Scheduler::addAsyncEvent(PEventCallback pevnt, uint8_t priority, unsigned l
 		//p = addTime(every);
 		if(p>=0){
 			tasks[p].addEvent(slave); // add async event as disabled
-			setTimes();
+			//setTimes();
 		}
 		PeriodicEvnt *dummy = new PeriodicEvnt(this, when+howlong, NULL, DISABLED-1, false, PERIODIC);// not enabled
 		p = addTime(when+howlong);
