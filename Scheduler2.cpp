@@ -1,28 +1,27 @@
 #include "Scheduler2.h"
 
 void AsyncEvntB::doEvent(unsigned long step){
-	counter += step; // aggiorna il contatore della durata della temporizzazione
-	if(!(step % (interval/step))){ // si attiva ad ogni interval
-		(*pevent)();
-	}
-	if(counter >= duration){ // disabilita le ripetizioni temporizzate
+	//Serial.println("AsyncEvntA: ");
+	counter += time; // aggiorna il contatore della durata della temporizzazione
+	//Serial.print("counter: ");Serial.println(counter);
+	if(counter < slaveTime){
+		//do nothing
+	}else if(counter < slaveTime + duration){
+		if(pevent != NULL)
+			(*pevent)();
+	}else{ // disabilita le ripetizioni temporizzate
 		counter = 0;
-		static_cast<Scheduler*>(sch)->disableEvent(order,time); // disabilita se stesso
-		order = order + DISABLED;
-	}
-	if(periodic){
-		static_cast<Scheduler*>(sch)->enableEvent(slaveOrder,slaveTime); // abilita il suo master (ripetizioni temporizzate)
-		slaveOrder = slaveOrder - DISABLED;
+		if(!periodic){
+			//static_cast<Scheduler*>(sch)->enableEvent(slaveId,slaveTime); // abilita il suo master (ripetizioni temporizzate)
+			static_cast<Scheduler*>(sch)->disableEvent(id,time); // disabilita se stesso
+		}
 	}
 };
-
+/*
 void AsyncEvntA::doEvent(unsigned long step){
-	static_cast<Scheduler*>(sch)->enableEvent(slaveOrder,slaveTime); // abilita il suo slave (ripetizioni temporizzate)
-	slaveOrder = slaveOrder - DISABLED;
-	static_cast<Scheduler*>(sch)->disableEvent(order,time); 			// disabilita se stesso
-	order = order + DISABLED;
-};
 
+};
+*/
 Scheduler::Scheduler(){
 	prec=0;
 	step=0;
@@ -144,6 +143,8 @@ bool TCB::addEvent(Evnt *evnt){
 		fe++;// first empty
 		if(evnt->enabled){
 			enabled++; // counter of enabled increment
+		}else{
+			evnt->order = evnt->order + DISABLED;
 		}
 		sort(events, fe);// sort by priority
 		ok = true;
@@ -163,8 +164,9 @@ bool TCB::getEventState(uint8_t order){
 bool TCB::enableEvent(uint8_t order){
 	bool ok = false;
 	int pos = cerca(order + DISABLED,events,fe);
-	//Serial.print("pos ");Serial.println(pos);		
+	Serial.print("pos ");Serial.println(pos);		
 	if(pos >= 0 && !events[pos]->enabled){// check if disabled for first
+		Serial.print("Enable made ");Serial.println(pos);	
 		events[pos]->enabled = true;
 		events[pos]->order = events[pos]->order - DISABLED;
 		sort(events, fe);// place enabled on lower order zone
@@ -177,7 +179,9 @@ bool TCB::enableEvent(uint8_t order){
 bool TCB::disableEvent(uint8_t order){
 	bool ok = false;
 	int pos = cerca(order,events,fe);
+	Serial.print("pos ");Serial.println(pos);	
 	if(pos >= 0 && events[pos]->enabled){// check if enabled for first
+		Serial.print("Dis made ");Serial.println(pos);	
 		events[pos]->enabled = false;
 		events[pos]->order = events[pos]->order + DISABLED;
 		sort(events, fe);// place disabled on greatest order zone
@@ -222,40 +226,39 @@ bool Scheduler::addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigne
 		ok = false;
 		Serial.println("ERRORE: indice di un tempo fuori range");
 	}
-	/*
+	
 	for(int i=0; i<nt; i++) {
 		Serial.println(tasks[i].time);
 	}
-	*/
+
 	return ok;
 }
 
 bool Scheduler::addAsyncEvent(PEventCallback pevnt, uint8_t priority, unsigned long when, unsigned long howlong, unsigned long every, bool repeat){// periodic events reggistration. Place this in setup().
 	bool ok = true;
 	
-	int p = addTime(when);
+	int p = addTime(every);
 	if(p>=0){
-		//Serial.print("when: ");Serial.println(when);
-		//Serial.print("p add: ");Serial.println(p);
-		AsyncEvntB *slave = new AsyncEvntB(this, howlong, when, priority, pevnt, priority, false, ASYNC_B, howlong, every, repeat);
-		AsyncEvntA *master = new AsyncEvntA(this, when, howlong, priority, pevnt, priority, true, ASYNC_A, howlong, every, repeat);
-		if(tasks[p].addEvent(master)){
-			setTimes();
-		}
-		int p = addTime(every);
+		AsyncEvntB *slave = new AsyncEvntB(this, every, when, priority, pevnt, DISABLED-priority, true, ASYNC_B, howlong, every, repeat);
+		//p = addTime(every);
 		if(p>=0){
 			tasks[p].addEvent(slave); // add async event as disabled
+			setTimes();
+		}
+		PeriodicEvnt *dummy = new PeriodicEvnt(this, when+howlong, NULL, DISABLED-priority-1, false, PERIODIC);// not enabled
+		p = addTime(when+howlong);
+		if(p>=0){
+			tasks[p].addEvent(dummy); // add async event as disabled
 			setTimes();
 		}
 	}else{
 		ok = false;
 		Serial.println("ERRORE: indice di un tempo fuori range");
 	}
-	/*
+	
 	for(int i=0; i<nt; i++) {
 		Serial.println(tasks[i].time);
 	}
-	*/
 	return ok;
 }
 
@@ -281,6 +284,7 @@ bool Scheduler::setEventState(uint8_t order, bool state, unsigned long when){
 bool Scheduler::disableEvent(uint8_t order, unsigned long when){// call as needed everywhere on runtime
 	bool ok = false;
 	int p = timeSearch(when, tasks, nt);
+	Serial.print("dis time pos: ");Serial.println(p);
 	if(p >= 0){
 		tasks[p].disableEvent(order);
 	}
