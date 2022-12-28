@@ -8,7 +8,7 @@ Simulazione su ESP32 con Wokwi di un esempio di timer asincrono: https://wokwi.c
 
 		
     		
-- Scheduler() Costruttore
+- ```Scheduler()``` Costruttore
 - bool addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigned long when) Aggiunge un evento periodico definito da:
 	- pevnt: callback evento da schedulare
 	- priority ordine di esecuzione oppure id del task in un certo slot temporale
