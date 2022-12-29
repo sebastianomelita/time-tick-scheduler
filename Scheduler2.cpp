@@ -134,10 +134,10 @@ void TCB::scambia(Evnt **a, Evnt **b){
     *a=*b;
     *b=c;
 }
-
+// must be NEVENTS < DISABLED !!!
 bool TCB::addEvent(Evnt *evnt){
 	bool ok = false;
-	if(fe < DISABLED){
+	if(fe < NEVENTS){
 		//evnt->pos = fe;
 		events[fe] = evnt;// default enabled
 		fe++;// first empty
