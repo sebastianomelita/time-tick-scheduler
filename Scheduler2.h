@@ -2,12 +2,13 @@
 #define __SCHEDULER_H__
 #include <string.h>
 #include <Arduino.h>
-#define NEVENTS		20
-#define NTIMES		10
+#define DISABLED	128
+#define NEVENTS		20  // must be NEVENTS < DISABLED!!!
+#define NTIMES		20
 #define PERIODIC 0
 #define ASYNC_A	 1
 #define ASYNC_B	 2
-#define DISABLED	128
+
 // https://en.wikibooks.org/wiki/Computer_Science_Design_Patterns/Mediator
 //per disaccoppiare Scheduler e gli eventi è necessario far derivare entrambi 
 //da genitori che non hanno riferimenti incrociati (pattern mediatore).
