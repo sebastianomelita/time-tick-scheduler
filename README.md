@@ -17,7 +17,7 @@ Simulazione su ESP32 con Wokwi di un esempio di **schedulazione periodica**: htt
 
 Simulazione su ESP32 con Wokwi di un esempio di **timer asincrono**: https://wokwi.com/projects/352243906494838785
 
-Simulazione su ESP32 con Wokwi di un esempio con scheduling ad ogni loop: https://wokwi.com/projects/352419045941500929
+Simulazione su ESP32 con Wokwi di un esempio con scheduling ad **ogni loop**: https://wokwi.com/projects/352419045941500929
 
 ### **Metodi** della classe **```Scheduler()```**:		
     		
