@@ -40,7 +40,7 @@ long Scheduler::getTime(unsigned long when){
 void Scheduler::setTimes(){
 	tbase = findGCD();
 	//Serial.print("tbase: ");Serial.println(tbase);
-	for(int i=0; i < nt; i++){
+	for(int i=1; i < nt; i++){
 		tasks[i].step = tasks[i].time / tbase; 
 		//Serial.print("step: ");Serial.println(tasks[i].step);
 	}
