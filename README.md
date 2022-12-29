@@ -4,6 +4,8 @@ Schedulatore di compiti basato sui [time tick](https://github.com/sebastianomeli
 
 Scegliere i vari **tempi in gioco** in maniera opportuna, tale da consentire un agevole calcolo automatico sia del **tempo base** (in modo che non risulti troppo piccolo) sia dei **contatori sentinella** dei time tick degli eventi (multipli del tempo base).
 
+Gli eventi possono essere **inseriti**, associati ai loro tempi, **senza** seguire un **ordine** particolare utilizzando una delle due funzioni a```ddPeriodicEvent()``` e ```addAsyncEvent()```.
+
 Il **tempo base** dei time tick() è scelto automaticamente calcolando il **massimo comune divisore** dei vari tempi in gioco.
 
 Simulazione su ESP32 con Wokwi di un esempio di **schedulazione periodica**: https://wokwi.com/projects/352057010320512001
@@ -17,7 +19,6 @@ Simulazione su ESP32 con Wokwi di un esempio di **timer asincrono**: https://wok
 	- ```pevnt```: callback evento da schedulare
 	- ```priority``` ordine di esecuzione oppure id del task in un certo slot temporale
 	- ```when```: slot temporale in cui l'evento deve essere ripetuto. La funzione definisce un nuovo slot se non esiste uno con un tempo uguale, oppure si limita ad associare l'evento ad uno slot esistente. 
-	Gli eventi possono essere inseriti associati ai loro tempi senza seguire un ordine particolare.
 - **```bool addAsyncEvent(PEventCallback pevnt, uint8_t priority, unsigned long when, unsigned long howlong, unsigned long every, bool repeat)```**. Aggiunge un evento aperiodico definito in più da:
 	- ```when```: slot temporale in cui l'evento comincia. La funzione definisce un nuovo slot se non ne esiste uno con un tempo uguale, oppure si limita ad associare l'evento ad uno slot esistente. 
 	- ```howlong```: quanto tempo dura la schedulazione
