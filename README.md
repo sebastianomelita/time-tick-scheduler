@@ -6,9 +6,10 @@ Scegliere i vari **tempi in gioco** in maniera opportuna, tale da consentire un 
 
 Gli **eventi** possono essere **inseriti**, associati ai loro tempi, **senza** seguire un **ordine** particolare utilizzando una delle due funzioni ```addPeriodicEvent()``` e ```addAsyncEvent()```. 
 
-Da tenere presente che:
+Da **tenere presente** che:
 - Per **ogni tempo** definito nello schedulatore è possibile inserire fino a **127 task**, limite imposto dalla profondità in bit scelta per alcune variabili di conteggio.
-- 
+- #define NEVENTS nel file scheduler2.h definisce il numero massimo attuale, per default impostato a 20
+- #define NTIMES nel file scheduler2.h definisce il numero massimo attuale, per default impostato a 20
 
 Il **tempo base** dei time tick() è scelto automaticamente calcolando il **massimo comune divisore** dei vari tempi in gioco.
 
