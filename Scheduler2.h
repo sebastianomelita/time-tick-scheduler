@@ -35,8 +35,8 @@ class Evnt{
 		unsigned long time;
 		unsigned long counter;
 		PEventCallback pevent;
-		Evnt(Sched *s, unsigned long when, PEventCallback x, uint8_t priority, bool enable, uint8_t etype){
-			time = when;
+		Evnt(Sched *s, unsigned long every, PEventCallback x, uint8_t priority, bool enable, uint8_t etype){
+			time = every;
 			sch = s;
 			pevent = x;
 			id = priority;
@@ -132,16 +132,16 @@ class Scheduler: public Sched{
 
 	public:
 		Scheduler();
-		bool addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigned long when);
+		bool addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigned long every);
 		bool addAsyncEvent(PEventCallback pevnt, uint8_t priority, unsigned long when, unsigned long howlong, unsigned long every, bool repeat);
 		void scheduleAll();
 		unsigned getTimebase();
 		unsigned long getNsteps();
 		long getTime(unsigned long when);
-		bool getEventState(uint8_t order, unsigned long);
-		bool setEventState(uint8_t order, bool state, unsigned long);
-		bool enableEvent(uint8_t, unsigned long);
-		bool disableEvent(uint8_t, unsigned long);
+		bool getEventState(uint8_t order, unsigned long every);
+		bool setEventState(uint8_t order, bool state, unsigned long every);
+		bool enableEvent(uint8_t order, unsigned long every);
+		bool disableEvent(uint8_t order, unsigned long every);
 };
 
 #endif
