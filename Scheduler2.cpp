@@ -262,40 +262,40 @@ bool Scheduler::addAsyncEvent(PEventCallback pevnt, uint8_t priority, unsigned l
 	return ok;
 }
 
-bool Scheduler::getEventState(uint8_t order, unsigned long every){
+bool Scheduler::getEventState(uint8_t priority, unsigned long every){
 	bool ok = false;
 	int pos; 
 	
 	int p = timeSearch(every, tasks, nt);
 	if(p >= 0){
-		tasks[p].getEventState(order);
+		tasks[p].getEventState(priority);
 	}
 	return ok;
 }
 
-bool Scheduler::setEventState(uint8_t order, bool state, unsigned long every){
+bool Scheduler::setEventState(uint8_t priority, bool state, unsigned long every){
 	if(state){
-		enableEvent(order,every);
+		enableEvent(priority,every);
 	}else{
-		disableEvent(order, every);
+		disableEvent(priority, every);
 	}
 }
 
-bool Scheduler::disableEvent(uint8_t order, unsigned long every){// call as needed everywhere on runtime
+bool Scheduler::disableEvent(uint8_t priority, unsigned long every){// call as needed everywhere on runtime
 	bool ok = false;
 	int p = timeSearch(every, tasks, nt);
 	//Serial.print("dis time pos: ");Serial.println(p);
 	if(p >= 0){
-		tasks[p].disableEvent(every);
+		tasks[p].disableEvent(priority);
 	}
 	return ok;
 }
 
-bool Scheduler::enableEvent(uint8_t order, unsigned long every){// call as needed everywhere on runtime
+bool Scheduler::enableEvent(uint8_t priority, unsigned long every){// call as needed everywhere on runtime
 	bool ok = false;
 	int p = timeSearch(every, tasks, nt);
 	if(p >= 0){
-		tasks[p].enableEvent(every);
+		tasks[p].enableEvent(priority);
 	}
 	return ok;
 }
