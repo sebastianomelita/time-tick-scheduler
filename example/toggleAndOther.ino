@@ -64,7 +64,7 @@ void setup() {
 	pinMode(led3, OUTPUT);
 	Serial.setTimeout(10);
 	Serial.begin(115200); 
-	scheduler.addPeriodicEvent(on50msEvents, 1, 100);
+	scheduler.addPeriodicEvent(on50msEvents, 1, 50);
 	scheduler.addPeriodicEvent(onMaxSpeedEvents, 1, 0);
 	scheduler.addPeriodicEvent(onHalfSecondEvents, 1, 500);
 	scheduler.addAsyncEvent(epoch20sec, 1, 6000, 5000, 500, true);
