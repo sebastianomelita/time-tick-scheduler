@@ -138,10 +138,10 @@ class Scheduler: public Sched{
 		unsigned getTimebase();
 		unsigned long getNsteps();
 		long getTime(unsigned long when);
-		bool getEventState(uint8_t order, unsigned long every);
-		bool setEventState(uint8_t order, bool state, unsigned long every);
-		bool enableEvent(uint8_t order, unsigned long every);
-		bool disableEvent(uint8_t order, unsigned long every);
+		bool getEventState(uint8_t priority, unsigned long every);
+		bool setEventState(uint8_t priority, bool state, unsigned long every);
+		bool enableEvent(uint8_t priority, unsigned long every);
+		bool disableEvent(uint8_t priority, unsigned long every);
 };
 
 #endif
