@@ -37,7 +37,7 @@ Simulazione su ESP32 con Wokwi di un esempio di debouncer per **pulsante toggle*
 - **```unsigned getTimebase()```**. Restituisce il tempo base dei time tick.
 - **```unsigned long getNsteps()```**. Restituisce il massimo valore del conteggio circolare dei time tick.
 - **```long getTime(unsigned long when)```**. Restituisce il conteggio in time tick del tempo fornito come parametro.
-- **```bool getEventState(uint8_t priority, unsigned long every)```**. Restituisce lo stato (abilitato o disabilitato) di un evento. Un evento è identificato dalla coppia (tempo in millisecondi, ordine).
+- **```bool getEventState(uint8_t priority, unsigned long every)```**. Restituisce lo stato (abilitato o disabilitato) di un evento. Un evento è identificato dalla coppia (tempo in millisecondi, priority).
 - **```bool setEventState(uint8_t priority, bool state, unsigned long every)```**. Imposta lo stato (abilitato o disabilitato) di un evento.
-- **```bool enableEvent(uint8_t, unsigned long every)```**. Abilita un evento identificato dalla coppia (tempo in millisecondi, ordine).
-- **```bool disableEvent(uint8_t, unsigned long every)```**. Disabilita un evento identificato dalla coppia (tempo in millisecondi, ordine).
+- **```bool enableEvent(uint8_t priority, unsigned long every)```**. Abilita un evento identificato dalla coppia (tempo in millisecondi, priority).
+- **```bool disableEvent(uint8_t priority, unsigned long every)```**. Disabilita un evento identificato dalla coppia (tempo in millisecondi, priority).
