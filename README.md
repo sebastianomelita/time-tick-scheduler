@@ -25,7 +25,7 @@ Simulazione su ESP32 con Wokwi di un esempio di debouncer per **pulsante toggle*
 ### **Metodi** della classe **```Scheduler()```**:		
     		
 - **```Scheduler()```** Costruttore
-- **```bool addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigned long when)```**. Aggiunge un evento periodico definito da:
+- **```bool addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigned long every)```**. Aggiunge un evento periodico definito da:
 	- ```pevnt```: callback evento da schedulare
 	- ```priority``` ordine di esecuzione oppure id del task in un certo slot temporale
 	- ```every```: slot temporale in cui l'evento deve essere ripetuto. La funzione definisce un nuovo slot se non esiste uno con un tempo uguale, oppure si limita ad associare l'evento ad uno slot esistente. 
