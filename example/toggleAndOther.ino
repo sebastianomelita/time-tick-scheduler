@@ -35,7 +35,7 @@ void on50msEvents(){
 	//val = digitalRead(!pulsante);	//pulsante collegato in pullup
 	if(precval==LOW && val==HIGH){ 	//rivelatore di fronte di salita
 		stato = !stato; 							//impostazione dello stato del toggle	
-		Serial.println(stato);
+		//Serial.println(stato);
 		digitalWrite(led3, stato);
 	}
 	precval=val;	
