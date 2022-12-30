@@ -21,6 +21,7 @@ Simulazione su ESP32 con Wokwi di un esempio con scheduling ad **ogni loop**: ht
 
 Simulazione su ESP32 con Wokwi di un esempio che realizza un debouncer per **pulsante toggle**: https://wokwi.com/projects/352463685677474817
 
+
 ### **Metodi** della classe **```Scheduler()```**:		
     		
 - **```Scheduler()```** Costruttore
