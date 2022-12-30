@@ -77,5 +77,5 @@ void setup() {
  
 void loop() {
 	scheduler.scheduleAll();
-	delay(10);
+	delay(1);
 }
