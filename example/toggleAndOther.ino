@@ -67,7 +67,7 @@ void setup() {
 	scheduler.addPeriodicEvent(on50msEvents, 1, 50);
 	scheduler.addPeriodicEvent(onMaxSpeedEvents, 1, 0);
 	scheduler.addPeriodicEvent(onHalfSecondEvents, 1, 500);
-	scheduler.addAsyncEvent(epoch20sec, 1, 6000, 5000, 500, true);
+	scheduler.addAsyncEvent(epoch20sec, 2, 6000, 5000, 500, true);
 	Serial.println(F("Scheduler init"));
 	Serial.print(F("Time base: "));
 	Serial.println(scheduler.getTimebase());
