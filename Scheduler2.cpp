@@ -212,14 +212,14 @@ int Scheduler::addTime(unsigned long when){
 }
 
 // nt: event index. 0:max_speed, 1:first_time_scheduled, 2:second_time_scheduled,...
-bool Scheduler::addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigned long when){// periodic events reggistration. Place this in setup().
+bool Scheduler::addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigned long every){// periodic events reggistration. Place this in setup().
 	bool ok = true;
 	
-	int p = addTime(when);
+	int p = addTime(every);
 	if(p>=0){
 		//Serial.print("when: ");Serial.println(when);
 		//Serial.print("p add: ");Serial.println(p);
-		if(tasks[p].addEvent(new PeriodicEvnt(this, when, pevnt, priority, true, PERIODIC))){
+		if(tasks[p].addEvent(new PeriodicEvnt(this, every, pevnt, priority, true, PERIODIC))){
 			setTimes();
 		}
 	}else{
@@ -262,40 +262,40 @@ bool Scheduler::addAsyncEvent(PEventCallback pevnt, uint8_t priority, unsigned l
 	return ok;
 }
 
-bool Scheduler::getEventState(uint8_t order, unsigned long when){
+bool Scheduler::getEventState(uint8_t order, unsigned long every){
 	bool ok = false;
 	int pos; 
 	
-	int p = timeSearch(when, tasks, nt);
+	int p = timeSearch(every, tasks, nt);
 	if(p >= 0){
 		tasks[p].getEventState(order);
 	}
 	return ok;
 }
 
-bool Scheduler::setEventState(uint8_t order, bool state, unsigned long when){
+bool Scheduler::setEventState(uint8_t order, bool state, unsigned long every){
 	if(state){
-		enableEvent(order,when);
+		enableEvent(order,every);
 	}else{
-		disableEvent(order, when);
+		disableEvent(order, every);
 	}
 }
 
-bool Scheduler::disableEvent(uint8_t order, unsigned long when){// call as needed everywhere on runtime
+bool Scheduler::disableEvent(uint8_t order, unsigned long every){// call as needed everywhere on runtime
 	bool ok = false;
-	int p = timeSearch(when, tasks, nt);
+	int p = timeSearch(every, tasks, nt);
 	//Serial.print("dis time pos: ");Serial.println(p);
 	if(p >= 0){
-		tasks[p].disableEvent(order);
+		tasks[p].disableEvent(every);
 	}
 	return ok;
 }
 
-bool Scheduler::enableEvent(uint8_t order, unsigned long when){// call as needed everywhere on runtime
+bool Scheduler::enableEvent(uint8_t order, unsigned long every){// call as needed everywhere on runtime
 	bool ok = false;
-	int p = timeSearch(when, tasks, nt);
+	int p = timeSearch(every, tasks, nt);
 	if(p >= 0){
-		tasks[p].enableEvent(order);
+		tasks[p].enableEvent(every);
 	}
 	return ok;
 }
