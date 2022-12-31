@@ -67,7 +67,8 @@ void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 	if(diff > tbase){ //schedulatore per tempo base 
 		prec += diff;
 		unsigned long ofst = diff/tbase;// right timeslot search
-		step = (step + ofst) % nsteps;// right timeslot placing
+		//step = (step + ofst) % nsteps;// right timeslot placing (NO)
+		step = (step + 1) % nsteps;// right timeslot placing 
 		// variely timed scheduled events
 		for(int i=1; i < nt; i++){// all times except the first
 			//Serial.println("------------------------------------------");
