@@ -360,6 +360,5 @@ void Scheduler::maxstepCalc(){
 			nsteps = tasks[i].step;
 		}
 	}
-	nsteps = nsteps +1; 
 }
 //END HELPER FUNCTIONS---------------------------------------------------------------------------------------------
