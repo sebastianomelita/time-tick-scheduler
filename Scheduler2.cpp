@@ -57,8 +57,6 @@ unsigned long Scheduler::getNsteps(){
 }
 
 void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
-	bool go = false;
-	
 	// max speed scheduled events
 	for(int j=0; j < tasks[0].enabled; j++){// only the first time
 		(*tasks[0].events[j]->pevent)();// event callback function call
