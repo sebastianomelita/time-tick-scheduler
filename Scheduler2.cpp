@@ -77,7 +77,7 @@ void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 			//if(!(step % tasks[i].step)){
 			if(prec - tasks[i].prec > tasks[i].time){
 				//Serial.print(" diff(");Serial.print(i);Serial.print(")");Serial.println(step - tasks[i].prec);
-				tasks[i].prec = prec;
+				tasks[i].prec += tasks[i].time;
 				
 				//Serial.println("++++++++++++++++++++++++++++++++++++++");
 				for(int j=0; j < tasks[i].enabled; j++){
