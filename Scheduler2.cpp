@@ -68,7 +68,7 @@ void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 		prec += diff;
 		//unsigned long ofst = diff / tbase; // right timeslot search
 		//unsigned long remain = diff % tbase; 
-		step = (step + 1) % nsteps; // right timeslot placing
+		//step = (step + 1) % nsteps; // right timeslot placing
 		//Serial.println(step);
 		// variely timed scheduled events
 		for(int i=1; i < nt; i++){// all times except the first
@@ -76,11 +76,11 @@ void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 			//Serial.print("i: ");Serial.println(i);
 			//Serial.print("Steplist: ");
 			//Serial.println(tasks[i].step);
-			if(!(step % tasks[i].step)){
-			//step = prec / tbase;
-			//if(step - tasks[i].prec > tasks[i].step){
+			//if(!(step % tasks[i].step)){
+			if(prec - tasks[i].prec > tasks[i].time){
 				//Serial.print(" diff(");Serial.print(i);Serial.print(")");Serial.println(step - tasks[i].prec);
-				//tasks[i].prec = step;
+				tasks[i].prec = prec;
+				
 				//Serial.println("++++++++++++++++++++++++++++++++++++++");
 				for(int j=0; j < tasks[i].enabled; j++){
 					//Serial.print(" j: ");
