@@ -13,7 +13,7 @@ Da **tenere presente** che:
 
 Il **tempo base** dei time tick() è scelto automaticamente calcolando il **massimo comune divisore** dei vari tempi in gioco.
 
-Il **numero massimo dei tick** prima della rotazione è pari al **minimo comune multiplo** dei tempi in gioco.
+Il **numero massimo dei tick** prima della rotazione è calcolato automaticamente ed è pari al **minimo comune multiplo** dei tempi in gioco.
 
 Esempi:
 
