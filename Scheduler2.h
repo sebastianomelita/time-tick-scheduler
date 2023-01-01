@@ -101,6 +101,7 @@ class TCB{
 		uint8_t fe;// first empty
 		uint8_t enabled;
 		unsigned long step;
+		unsigned long prec;
 		unsigned long time;
 		TCB(){step = 0; time = 0; enabled = 0; fe = 0;};
 		bool addEvent(Evnt *);
@@ -121,14 +122,16 @@ class Scheduler: public Sched{
 		unsigned long tbase;
 		unsigned long prec=0;
 		volatile unsigned long step;
-		int gcd(int, int);
+		unsigned long gcd(unsigned long, unsigned long);
 		unsigned long nsteps;
-		unsigned findGCD();
+		unsigned long findGCD();
 		void timeSort(TCB*, uint8_t);
 		int timeSearch(unsigned long, TCB*, int);
 		void maxstepCalc();
+		unsigned long lcm(unsigned long m, unsigned long n, unsigned long g);
 		void setTimes();
 		int addTime( unsigned long);
+		unsigned long mcm;
 
 	public:
 		Scheduler();
