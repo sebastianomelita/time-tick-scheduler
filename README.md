@@ -24,6 +24,7 @@ Esempi:
 - Simulazione su ESP32 con Wokwi di un esempio con scheduling ad **ogni loop**: https://wokwi.com/projects/352419045941500929
 
 - Simulazione su ESP32 con Wokwi di un esempio di debouncer per **pulsante toggle**: https://wokwi.com/projects/352463685677474817
+- Simulazione su ESP32 con Wokwi di un esempio di test per **task con delay random**:https://wokwi.com/projects/352549012781285377
 
 
 ### **Metodi** della classe **```Scheduler()```**:		
