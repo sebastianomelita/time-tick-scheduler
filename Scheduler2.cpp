@@ -39,13 +39,13 @@ long Scheduler::getTime(unsigned long when){
 
 void Scheduler::setTimes(){
 	tbase = findGCD();
+	Serial.print("mcm: ");Serial.println(mcm);
 	//Serial.print("tbase: ");Serial.println(tbase);
 	for(int i=1; i < nt; i++){
 		tasks[i].step = tasks[i].time / tbase; 
-		//Serial.print("step: ");Serial.println(tasks[i].step);
+		Serial.print("step: ");Serial.println(tasks[i].step);
 	}
 	maxstepCalc();
-	
 }
 
 unsigned Scheduler::getTimebase(){
@@ -66,17 +66,22 @@ void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 	unsigned long diff = millis()-prec;
 	if(diff > tbase){ //schedulatore per tempo base 
 		prec += diff;
-		unsigned long ofst = diff/tbase;// right timeslot search
-		//step = (step + ofst) % nsteps;// right timeslot placing (NO)
-		step = (step + 1) % nsteps;// right timeslot placing 
+		//unsigned long ofst = diff / tbase; // right timeslot search
+		//unsigned long remain = diff % tbase; 
+		step = (step + 1) % nsteps; // right timeslot placing
+		//Serial.println(step);
 		// variely timed scheduled events
 		for(int i=1; i < nt; i++){// all times except the first
 			//Serial.println("------------------------------------------");
 			//Serial.print("i: ");Serial.println(i);
 			//Serial.print("Steplist: ");
 			//Serial.println(tasks[i].step);
-			if(!(step % tasks[i].step)){
-				//Serial.println(" si");
+			//if(!(step % tasks[i].step)){
+			unsigned long step2 = prec / tbase;
+			if(step2 - tasks[i].prec > tasks[i].step){
+				//Serial.print(" diff(");Serial.print(i);Serial.print(")");Serial.println(step - tasks[i].prec);
+				tasks[i].prec = step2;
+				
 				//Serial.println("++++++++++++++++++++++++++++++++++++++");
 				for(int j=0; j < tasks[i].enabled; j++){
 					//Serial.print(" j: ");
@@ -252,7 +257,8 @@ bool Scheduler::addAsyncEvent(PEventCallback pevnt, uint8_t priority, unsigned l
 		ok = false;
 		Serial.println("ERRORE: indice di un tempo fuori range");
 	}
-	
+	Serial.print("every: ");Serial.println(every);	
+	Serial.print("dummy: ");Serial.println(when+howlong); 	
 	for(int i=0; i<nt; i++) {
 		Serial.println(tasks[i].time);
 	}
@@ -297,20 +303,30 @@ bool Scheduler::enableEvent(uint8_t priority, unsigned long every){// call as ne
 	return ok;
 }
 //HELPER FUNCTIONS---------------------------------------------------------------------------------------------
-int Scheduler::gcd(int a, int b)
+unsigned long Scheduler::gcd(unsigned long a, unsigned long b)
 {
   if (a == 0)
-    return b;
-  return gcd(b % a, a);
+        return b;
+    return gcd(b % a, a);
 }
 
-unsigned Scheduler::findGCD(){
-  unsigned result = tasks[1].time;
+unsigned long Scheduler::lcm(unsigned long m, unsigned long n, unsigned long gcd){
+  return m / gcd * n;
+}
+
+unsigned long Scheduler::findGCD(){
+  unsigned long mcd = tasks[1].time;
+  unsigned long mcd2 = tasks[1].time;
+  mcm = tasks[1].time;
+  //Serial.println("-----------------------------------------------");
   for (uint8_t i = 2; i < nt; i++)
   {
-    result = gcd(tasks[i].time, result);
+	  mcd = gcd(tasks[i].time, mcd);
+	  mcd2 = gcd(tasks[i].time, mcm);
+	  mcm = lcm(tasks[i].time, mcm, mcd2);
+	  //Serial.print("mcm ");Serial.println(mcm);
   }
-  return result;
+  return mcd;
 }
 
 int Scheduler::timeSearch(unsigned long tosearch, TCB* list, int pempty){
@@ -351,11 +367,18 @@ void Scheduler::timeSort(TCB* list, uint8_t fe){
 }
 
 void Scheduler::maxstepCalc(){
+	/*
 	nsteps = tasks[1].step;
-	for(int i=2; i<nt; i++) {
+	int i;
+	for(i=2; i<nt; i++) {
 		if(nsteps < tasks[i].step){
 			nsteps = tasks[i].step;
 		}
-	}
+	}*/
+	//unsigned long div = nsteps / tasks[i].step;
+	Serial.print("mcm: ");Serial.println(mcm);
+	if(tbase>0)
+		nsteps = mcm / tbase;
+	Serial.print("nsteps: ");Serial.println(nsteps);
 }
 //END HELPER FUNCTIONS---------------------------------------------------------------------------------------------
