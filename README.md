@@ -13,6 +13,8 @@ Da **tenere presente** che:
 
 Il **tempo base** dei time tick() è scelto automaticamente calcolando il **massimo comune divisore** dei vari tempi in gioco.
 
+Il **numero massimo dei tick** prima della rotazione è pari al **minimo comune multiplo** dei tempi in gioco.
+
 Simulazione su ESP32 con Wokwi di un esempio di **schedulazione periodica**: https://wokwi.com/projects/352057010320512001
 
 Simulazione su ESP32 con Wokwi di un esempio di **timer asincrono**: https://wokwi.com/projects/352243906494838785
