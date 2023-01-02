@@ -62,12 +62,8 @@ void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 		(*tasks[0].events[j]->pevent)();// event callback function call
 	}
 	
-	if(millis()-prec > tbase){ //schedulatore per tempo base 
+	if(millis()-prec >= tbase){ //schedulatore per tempo base 
 		prec += tbase;
-		//unsigned long ofst = diff / tbase; // right timeslot search
-		//unsigned long remain = diff % tbase; 
-		//step = (step + 1) % nsteps; // right timeslot placing
-		//Serial.println(step);
 		// variely timed scheduled events
 		for(int i=1; i < nt; i++){// all times except the first
 			//Serial.println("------------------------------------------");
@@ -75,22 +71,57 @@ void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 			//Serial.print("Steplist: ");
 			//Serial.println(tasks[i].step);
 			//if(!(step % tasks[i].step)){
-			if(prec - tasks[i].prec > tasks[i].time){
+			if(prec - tasks[i].prec >= tasks[i].time){
+				//tasks[i].prec += tasks[i].time;
 				//Serial.print(" diff(");Serial.print(i);Serial.print(")");Serial.println(step - tasks[i].prec);
-				tasks[i].prec += tasks[i].time;
+				//tasks[i].prec += tasks[i].time;
 				//tasks[i].prec = prec;
-				
 				//Serial.println("++++++++++++++++++++++++++++++++++++++");
 				for(int j=0; j < tasks[i].enabled; j++){
 					//Serial.print(" j: ");
 					//Serial.println(j);
 					tasks[i].events[j]->doEvent(step);// event callback function call	
 				}
+				tasks[i].prec += tasks[i].time;
 			}
 		}
 	}
 }
 
+/*
+// https://www.ics.uci.edu/~givargis/pubs/C50.pdf
+void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
+	// max speed scheduled events
+	for(int j=0; j < tasks[0].enabled; j++){// only the first time
+		(*tasks[0].events[j]->pevent)();// event callback function call
+	}
+	
+	if(millis()-prec >= tbase){ //schedulatore per tempo base 
+		prec += tbase;
+		// variely timed scheduled events
+		for(int i=1; i < nt; i++){// all times except the first
+			//Serial.println("------------------------------------------");
+			//Serial.print("i: ");Serial.println(i);
+			//Serial.print("Steplist: ");
+			//Serial.println(tasks[i].step);
+			//if(!(step % tasks[i].step)){
+			if(tasks[i].prec >= tasks[i].time){
+				//Serial.print(" diff(");Serial.print(i);Serial.print(")");Serial.println(step - tasks[i].prec);
+				//tasks[i].prec += tasks[i].time;
+				//tasks[i].prec = prec;
+				//Serial.println("++++++++++++++++++++++++++++++++++++++");
+				for(int j=0; j < tasks[i].enabled; j++){
+					//Serial.print(" j: ");
+					//Serial.println(j);
+					tasks[i].events[j]->doEvent(step);// event callback function call	
+				}
+				tasks[i].prec = 0;
+			}
+			tasks[i].prec += tbase;
+		}
+	}
+}
+*/
 int TCB::cerca(uint8_t order, Evnt **list,int pempty){
    int min=0;
    int max=pempty-1;
