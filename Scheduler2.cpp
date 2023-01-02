@@ -61,8 +61,8 @@ void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 	for(int j=0; j < tasks[0].enabled; j++){// only the first time
 		(*tasks[0].events[j]->pevent)();// event callback function call
 	}
-	unsigned long diff = millis()-prec;
-	if(diff > tbase){ //schedulatore per tempo base 
+	
+	if(millis()-prec > tbase){ //schedulatore per tempo base 
 		prec += tbase;
 		//unsigned long ofst = diff / tbase; // right timeslot search
 		//unsigned long remain = diff % tbase; 
