@@ -63,7 +63,7 @@ void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 	}
 	unsigned long diff = millis()-prec;
 	if(diff > tbase){ //schedulatore per tempo base 
-		prec += diff;
+		prec += tbase;
 		//unsigned long ofst = diff / tbase; // right timeslot search
 		//unsigned long remain = diff % tbase; 
 		//step = (step + 1) % nsteps; // right timeslot placing
@@ -77,8 +77,8 @@ void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 			//if(!(step % tasks[i].step)){
 			if(prec - tasks[i].prec > tasks[i].time){
 				//Serial.print(" diff(");Serial.print(i);Serial.print(")");Serial.println(step - tasks[i].prec);
-				//tasks[i].prec += tasks[i].time;
-				tasks[i].prec = prec;
+				tasks[i].prec += tasks[i].time;
+				//tasks[i].prec = prec;
 				
 				//Serial.println("++++++++++++++++++++++++++++++++++++++");
 				for(int j=0; j < tasks[i].enabled; j++){
