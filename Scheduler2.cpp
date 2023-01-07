@@ -26,6 +26,7 @@ Scheduler::Scheduler(){
 	prec=0;
 	step=0;
 	nt = 1;
+	timerFlag = false;
 }
 
 long Scheduler::getTime(unsigned long when){
@@ -71,7 +72,7 @@ void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 	if(millis()-prec >= tbase){ //schedulatore per tempo base 
 		prec += tbase;
 		// variely timed scheduled events
-		for(int i=1; i < nt; i++){// all times except the first
+		for(int i=0; i < nt-1; i++){// all times except the first
 			//Serial.println("------------------------------------------");
 			//Serial.print("i: ");Serial.println(i);
 			//Serial.print("Steplist: ");
@@ -95,18 +96,18 @@ void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 	}
 }
 
-/*
+
 // https://www.ics.uci.edu/~givargis/pubs/C50.pdf
-void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
+void Scheduler::scheduleAllISRFlagged(){// scheduler engine. Place this in loop().	
 	// max speed scheduled events
-	for(int j=0; j < tasks[0].enabled; j++){// only the first time
-		(*tasks[0].events[j]->pevent)();// event callback function call
+	for(int j=0; j < tasks[nt-1].enabled; j++){// only the first time
+		(*tasks[nt-1].events[j]->pevent)();// event callback function call
 	}
 	
-	if(millis()-prec >= tbase){ //schedulatore per tempo base 
-		prec += tbase;
+	if(timerFlag){ //schedulatore per tempo base 
+		timerFlag = false;
 		// variely timed scheduled events
-		for(int i=1; i < nt; i++){// all times except the first
+		for(int i=0; i < nt; i++){// all times except the first
 			//Serial.println("------------------------------------------");
 			//Serial.print("i: ");Serial.println(i);
 			//Serial.print("Steplist: ");
@@ -124,7 +125,19 @@ void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 		}
 	}
 }
-*/
+
+void Scheduler::timerISR(void) {
+   if (timerFlag) {
+		for(int i=0; i < nt; i++){// all times except the first
+			tasks[i].prec += tbase;
+		}	
+   }
+   else {
+      timerFlag = true;
+   }
+   return;
+}
+
 int TCB::cerca(uint8_t order, Evnt **list,int pempty){
    int min=0;
    int max=pempty-1;
@@ -238,6 +251,7 @@ int Scheduler::addTime(unsigned long when){
 	if(p<0){ // se non lo trova
 		if(nt < NTIMES){
 			tasks[nt].time = when; // lo inserisce
+			tasks[nt].prec = tasks[nt].time; // time init
 			nt++;
 			timeSort(tasks, nt); // ordina
 			p = timeSearch(when, tasks, nt);
