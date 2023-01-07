@@ -140,7 +140,7 @@ class Scheduler: public Sched{
 		bool addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigned long every);
 		bool addAsyncEvent(PEventCallback pevnt, uint8_t priority, unsigned long when, unsigned long howlong, unsigned long every, bool repeat);
 		void scheduleAll();
-		void scheduleAllISRFlagged();
+		void scheduleAllISRFlagged(bool noflag=false);
 		unsigned getTimebase();
 		unsigned long getNsteps();
 		long getTime(unsigned long when);
