@@ -98,13 +98,13 @@ void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 
 
 // https://www.ics.uci.edu/~givargis/pubs/C50.pdf
-void Scheduler::scheduleAllISRFlagged(){// scheduler engine. Place this in loop().	
+void Scheduler::scheduleAllISRFlagged(bool noflag){// scheduler engine. Place this in loop().	
 	// max speed scheduled events
 	for(int j=0; j < tasks[nt-1].enabled; j++){// only the first time
 		(*tasks[nt-1].events[j]->pevent)();// event callback function call
 	}
 	
-	if(timerFlag){ //schedulatore per tempo base 
+	if(timerFlag || noflag){ //schedulatore per tempo base 
 		// variely timed scheduled events
 		for(int i=0; i < nt; i++){// all times except the first
 			//Serial.println("------------------------------------------");
