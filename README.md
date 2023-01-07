@@ -15,7 +15,7 @@ Il **tempo base** dei time tick() è scelto automaticamente calcolando il **mass
 
 Il **numero massimo dei tick** prima della rotazione è calcolato automaticamente ed è pari al **minimo comune multiplo** dei tempi in gioco.
 
-Se più tick con **periodicità diversa** occorrono nello stesso tempo (tick), viene data priorità a quelli **più lenti** dimodochè se un eventuale **ritardo** di un **task veloce** dovesse spalmarsi su più tick rapidi, l'**errore di tempo** introdotto coinvolgerebbe solo il **primo tick breve** successivo e non avrebbe effetto sui **tick lenti** (di periodicità più grande) dato che sono sempre **serviti prima**.
+Se più task con **periodicità diversa** occorrono nello stesso tempo (tick), viene data priorità a quelli **più lenti** dimodochè se un eventuale **ritardo** di un **task veloce** dovesse spalmarsi su più tick rapidi, l'**errore di tempo** introdotto coinvolgerebbe solo il **primo tick breve** successivo e non avrebbe effetto sui **tick lenti** (di periodicità più grande) dato che sono sempre **serviti prima**.
 
 Esempi:
 
