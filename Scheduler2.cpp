@@ -47,7 +47,13 @@ void Scheduler::setTimes(){
 	}
 	maxstepCalc();
 }
-
+/*
+unsigned Scheduler::init(){
+	for(int i=0; i<nt; i++){
+		tasks[i].prec = tasks[i].time;
+	}
+}
+*/
 unsigned Scheduler::getTimebase(){
 	return tbase;
 }
@@ -72,6 +78,7 @@ void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 			//Serial.println(tasks[i].step);
 			//if(!(step % tasks[i].step)){
 			if(prec - tasks[i].prec >= tasks[i].time){
+				tasks[i].prec += tasks[i].time;
 				//tasks[i].prec += tasks[i].time;
 				//Serial.print(" diff(");Serial.print(i);Serial.print(")");Serial.println(step - tasks[i].prec);
 				//tasks[i].prec += tasks[i].time;
@@ -82,7 +89,7 @@ void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 					//Serial.println(j);
 					tasks[i].events[j]->doEvent(step);// event callback function call	
 				}
-				tasks[i].prec += tasks[i].time;
+				//tasks[i].prec += tasks[i].time;
 			}
 		}
 	}
