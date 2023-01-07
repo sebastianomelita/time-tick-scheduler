@@ -105,7 +105,6 @@ void Scheduler::scheduleAllISRFlagged(){// scheduler engine. Place this in loop(
 	}
 	
 	if(timerFlag){ //schedulatore per tempo base 
-		timerFlag = false;
 		// variely timed scheduled events
 		for(int i=0; i < nt; i++){// all times except the first
 			//Serial.println("------------------------------------------");
@@ -123,6 +122,7 @@ void Scheduler::scheduleAllISRFlagged(){// scheduler engine. Place this in loop(
 			}
 			tasks[i].prec += tbase;
 		}
+		timerFlag = false;
 	}
 }
 
@@ -251,7 +251,7 @@ int Scheduler::addTime(unsigned long when){
 	if(p<0){ // se non lo trova
 		if(nt < NTIMES){
 			tasks[nt].time = when; // lo inserisce
-			tasks[nt].prec = tasks[nt].time; // time init
+			//tasks[nt].prec = tasks[nt].time; // time init
 			nt++;
 			timeSort(tasks, nt); // ordina
 			p = timeSearch(when, tasks, nt);
