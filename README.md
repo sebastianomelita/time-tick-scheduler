@@ -43,7 +43,7 @@ Esempi:
 	- ```when```: slot temporale in cui l'evento comincia. La funzione definisce un nuovo slot se non ne esiste uno con un tempo uguale, oppure si limita ad associare l'evento ad uno slot esistente. 
 	- ```howlong```: quanto tempo dura la schedulazione. Non viene definito un nuovo slot per questo tempo ma per il tempo every+howlong.
 	- ```every```: slot temporale in cui l'evento deve essere ripetuto. La funzione definisce un nuovo slot se non ne esiste uno con un tempo uguale, oppure si limita ad associare l'evento ad uno slot esistente. In unione al campo priority **identifica** l'evento aperiodico.
-- **```void scheduleAll()```**. Esegue tutti i task. Da inserire nel loop() o in una callback richiamata ad intervalli regolari (interrupt).
+- **```void scheduleAll()```**. Esegue tutti i task. Da inserire nel loop() o in una callback richiamata ad intervalli regolari.
 - **```unsigned getTimebase()```**. Restituisce il tempo base dei time tick.
 - **```unsigned long getNsteps()```**. Restituisce il massimo valore del conteggio circolare dei time tick.
 - **```long getTime(unsigned long when)```**. Restituisce il conteggio in time tick del tempo fornito come parametro.
@@ -51,3 +51,5 @@ Esempi:
 - **```bool setEventState(uint8_t priority, bool state, unsigned long every)```**. Imposta lo stato (abilitato o disabilitato) di un evento.
 - **```bool enableEvent(uint8_t priority, unsigned long every)```**. Abilita un evento identificato dalla coppia (tempo every in millisecondi, priority).
 - **```bool disableEvent(uint8_t priority, unsigned long every)```**. Disabilita un evento identificato dalla coppia (tempo every in millisecondi, priority).
+- **```void scheduleAllISRFlagged()```**. Esegue tutti i task. Da inserire nel loop() è richiamata ad intervalli regolari da un flag asserito da ```void timerISR(void)```.
+- **```void timerISR(void)```**. ISR richiamata ad intervalli regolari da un timer HW (interrupt).
