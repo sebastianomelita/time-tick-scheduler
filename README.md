@@ -53,6 +53,6 @@ Esempi:
 - **```bool setEventState(uint8_t priority, bool state, unsigned long every)```**. Imposta lo stato (abilitato o disabilitato) di un evento.
 - **```bool enableEvent(uint8_t priority, unsigned long every)```**. Abilita un evento identificato dalla coppia (tempo every in millisecondi, priority).
 - **```bool disableEvent(uint8_t priority, unsigned long every)```**. Disabilita un evento identificato dalla coppia (tempo every in millisecondi, priority).
-- **```void scheduleAllISRFlagged(bool noflag=false)```**. Esegue tutti i task. Da inserire nel ```loop()``` è richiamata ad intervalli regolari da un flag asserito da ```void timerISR(void)```.
+- **```void scheduleAllISRFlagged(bool noflag=false)```**. Esegue tutti i task su segnalazione di un flag asserito dalla ```void timerISR()``` . Da inserire nel ```loop()``` dove viene eseguito il polling del flag ad ogni ciclo.
 	- ```noflag```: disabilita il check del flag di task in esecuzione. Di default a false. Settarlo a false se ```void scheduleAllISRFlagged(true)``` può essere eseguita direttamente dentro una callback isocrona col tempo base. Più chiamate consecutive realizzano ciascuna un tick invocando tutti i task ad esso associati.
 - **```void timerISR(void)```**. ISR richiamata ad intervalli regolari da un timer HW (interrupt).
