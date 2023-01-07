@@ -132,12 +132,15 @@ class Scheduler: public Sched{
 		void setTimes();
 		int addTime( unsigned long);
 		unsigned long mcm;
+		volatile bool timerFlag;
 
 	public:
 		Scheduler();
+		void init();
 		bool addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigned long every);
 		bool addAsyncEvent(PEventCallback pevnt, uint8_t priority, unsigned long when, unsigned long howlong, unsigned long every, bool repeat);
 		void scheduleAll();
+		void scheduleAllISRFlagged();
 		unsigned getTimebase();
 		unsigned long getNsteps();
 		long getTime(unsigned long when);
@@ -145,6 +148,7 @@ class Scheduler: public Sched{
 		bool setEventState(uint8_t priority, bool state, unsigned long every);
 		bool enableEvent(uint8_t priority, unsigned long every);
 		bool disableEvent(uint8_t priority, unsigned long every);
+		void timerISR(void);
 };
 
 #endif
