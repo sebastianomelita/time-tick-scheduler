@@ -29,7 +29,7 @@ Esempi:
 
 - Simulazione su ESP32 con Wokwi di un esempio di test per **task con delay random**: https://wokwi.com/projects/352549012781285377
 
-- Simulazione su ESP32 con Wokwi di test per **task con delay random** con ISR:https://wokwi.com/projects/353217720393475073
+- Simulazione su ESP32 con Wokwi di test per **task con delay random** con ISR: https://wokwi.com/projects/353217720393475073
 
 
 ### **Metodi** della classe **```Scheduler()```**:		
