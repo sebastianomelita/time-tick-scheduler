@@ -64,8 +64,8 @@ unsigned long Scheduler::getNsteps(){
 
 void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 	// max speed scheduled events
-	for(int j=0; j < tasks[0].enabled; j++){// only the first time
-		(*tasks[0].events[j]->pevent)();// event callback function call
+	for(int j=0; j < tasks[nt-1].enabled; j++){// only the first time
+		(*tasks[nt-1].events[j]->pevent)();// event callback function call
 	}
 	
 	if(millis()-prec >= tbase){ //schedulatore per tempo base 
@@ -211,7 +211,7 @@ bool TCB::enableEvent(uint8_t order){
 bool TCB::disableEvent(uint8_t order){
 	bool ok = false;
 	int pos = cerca(order,events,fe);
-	//Serial.print("pos ");Serial.println(pos);	
+	//Serial.print("pos: ");Serial.println(pos);	
 	if(pos >= 0 && events[pos]->enabled){// check if enabled for first
 		//Serial.print("Dis made ");Serial.println(pos);	
 		events[pos]->enabled = false;
@@ -225,13 +225,16 @@ bool TCB::disableEvent(uint8_t order){
 
 int Scheduler::addTime(unsigned long when){
 	int p = -1;
-	
+	/*
 	if(when==0){
 		p=0;
 	}else{
 		p = timeSearch(when, tasks, nt);
 	}
-	
+	*/
+	Serial.print("when: ");Serial.println(when);	
+	p = timeSearch(when, tasks, nt);
+	Serial.print("pos1: ");Serial.println(p);	
 	if(p<0){ // se non lo trova
 		if(nt < NTIMES){
 			tasks[nt].time = when; // lo inserisce
@@ -345,11 +348,11 @@ unsigned long Scheduler::lcm(unsigned long m, unsigned long n, unsigned long gcd
 }
 
 unsigned long Scheduler::findGCD(){
-  unsigned long mcd = tasks[1].time;
-  unsigned long mcd2 = tasks[1].time;
-  mcm = tasks[1].time;
+  unsigned long mcd = tasks[0].time;
+  unsigned long mcd2 = tasks[0].time;
+  mcm = tasks[0].time;
   //Serial.println("-----------------------------------------------");
-  for (uint8_t i = 2; i < nt; i++)
+  for (uint8_t i = 1; i < nt-1; i++)
   {
 	  mcd = gcd(tasks[i].time, mcd);
 	  mcd2 = gcd(tasks[i].time, mcm);
@@ -364,16 +367,22 @@ int Scheduler::timeSearch(unsigned long tosearch, TCB* list, int pempty){
    int max=pempty-1;
    int med;
    
+   //Serial.println("Begin sort ----------------------------------------------------------");
+   for(int i=0; i<nt; i++) {
+		Serial.println(tasks[i].time);
+	}
    while(min<=max){
        med=(min+max)/2;
-       if(tosearch < list[med].time){
+	   Serial.println(med);
+       if(tosearch > list[med].time){
            max=med-1;
-       }else if(tosearch > list[med].time){
+       }else if(tosearch < list[med].time){
            min=med+1;
        }else{
            min=max+1;
        }
    }
+   //Serial.println("End search ----------------------------------------------------------");
    if(tosearch != list[med].time){
        med=-1;
    }
@@ -384,7 +393,7 @@ void Scheduler::timeSort(TCB* list, uint8_t fe){
     int i,j;
 	for(i=fe-1; i>=0; i--) {
         for(j=0; j<i; j++){
-            if(list[j].time > list[j+1].time){
+            if(list[j].time < list[j+1].time){
               TCB app = list[j];
 			  list[j] = list[j+1];
 			  list[j+1] = app;
@@ -393,7 +402,7 @@ void Scheduler::timeSort(TCB* list, uint8_t fe){
 			  //list[j+1].pos = j+1;
             }  
         }
-    }   
+    } 
 }
 
 void Scheduler::maxstepCalc(){
