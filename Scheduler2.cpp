@@ -111,16 +111,16 @@ void Scheduler::scheduleAllISRFlagged(bool noflag){// scheduler engine. Place th
 			//Serial.print("i: ");Serial.println(i);
 			//Serial.print("Steplist: ");
 			//Serial.println(tasks[i].step);
-			if(tasks[i].prec >= tasks[i].time){
+			if(tasks[i].elapsed >= tasks[i].time){
 				//Serial.println("++++++++++++++++++++++++++++++++++++++");
 				for(int j=0; j < tasks[i].enabled; j++){
 					//Serial.print(" j: ");
 					//Serial.println(j);
 					tasks[i].events[j]->doEvent(step);// event callback function call	
 				}
-				tasks[i].prec = 0;
+				tasks[i].elapsed = 0;
 			}
-			tasks[i].prec += tbase;
+			tasks[i].elapsed += tbase;
 		}
 		timerFlag = false;
 	}
@@ -129,7 +129,7 @@ void Scheduler::scheduleAllISRFlagged(bool noflag){// scheduler engine. Place th
 void Scheduler::timerISR(void) {
    if (timerFlag) {
 		for(int i=0; i < nt; i++){// all times except the first
-			tasks[i].prec += tbase;
+			tasks[i].elapsed += tbase;
 		}	
    }
    else {
@@ -251,6 +251,7 @@ int Scheduler::addTime(unsigned long when){
 	if(p<0){ // se non lo trova
 		if(nt < NTIMES){
 			tasks[nt].time = when; // lo inserisce
+			tasks[nt].elapsed = tasks[nt].time; // time init
 			//tasks[nt].prec = tasks[nt].time; // time init
 			nt++;
 			timeSort(tasks, nt); // ordina
