@@ -4,7 +4,7 @@ Schedulatore di compiti basato sui [time tick](https://github.com/sebastianomeli
 
 Scegliere i vari **tempi in gioco** in maniera opportuna, tale da consentire un agevole calcolo automatico sia del **tempo base** (in modo che non risulti troppo piccolo) sia dei **contatori sentinella** dei time tick degli eventi (multipli del tempo base).
 
-Gli **eventi** possono essere **inseriti**, associati ai loro tempi, **senza** seguire un **ordine** particolare utilizzando una delle due funzioni ```addPeriodicEvent()``` e ```addAsyncEvent()```. 
+Gli **eventi** possono essere **inseriti**, associati ai loro tempi, **senza** seguire un **ordine** particolare delle invocazioni utilizzando una delle due funzioni ```addPeriodicEvent()``` e ```addAsyncEvent()```. 
 
 Da **tenere presente** che:
 - Per **ogni tempo** definito nello schedulatore è possibile inserire fino a **127 eventi**, limite imposto dalla profondità in bit scelta per alcune variabili di conteggio.
