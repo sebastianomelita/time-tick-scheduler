@@ -19,7 +19,7 @@ Se più task con **periodicità diversa** occorrono nello stesso tempo (tick), v
 
 La libreria permette un'**alternativa** al **ricampionamento nel loop(**) e al **riordinamento** per tempi decrescenti dei task per compensare i **ritardi** di un task, sfruttando la proprietà di **prerilascio** forzato di un task che possiedono gli interrupt. Se i tick sono **interrupt based** allora essi accadono sempre e comunque nel tempo esatto a loro deputato anche in presenza di un task che **ritarda** la sua esecuzione. 
 
-Esempi:
+**Esempi:**
 
 - Simulazione su ESP32 con Wokwi di un esempio di **schedulazione periodica**: https://wokwi.com/projects/352057010320512001
 
