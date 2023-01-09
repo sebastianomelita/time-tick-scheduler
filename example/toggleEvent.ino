@@ -42,8 +42,6 @@ void setup() {
 	Serial.println(F("Scheduler init"));
 	Serial.print(F("Time base: "));
 	Serial.println(scheduler.getTimebase());
-	Serial.print(F("Nsteps: "));
-	Serial.println(scheduler.getNsteps());
 }
  
 void loop() {
