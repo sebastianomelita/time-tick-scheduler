@@ -332,7 +332,7 @@ bool Scheduler::setEventState(uint8_t priority, bool state, unsigned long every)
 	}
 }
 
-bool Scheduler::toggleState(uint8_t priority, unsigned long every){
+bool Scheduler::toggleEvent(uint8_t priority, unsigned long every){
 	bool state = getEventState(priority, every);
 	if(state){
 		disableEvent(priority,every);
