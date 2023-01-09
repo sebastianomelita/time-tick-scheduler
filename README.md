@@ -58,3 +58,9 @@ La libreria permette un'**alternativa** al **ricampionamento nel loop(**) per co
 - **```void scheduleAllISRFlagged(bool noflag=false)```**. Esegue tutti i task su segnalazione di un flag asserito dalla ```void timerISR()``` . Da inserire nel ```loop()``` dove viene eseguito il polling del flag ad ogni ciclo. Una chiamata esegue i task associati ad un tick solo se il flag è asserito, altrimenti non esegue nulla.
 	- ```noflag```: disabilita il check del flag di task in esecuzione. Di default a false. Settarlo a false se ```void scheduleAllISRFlagged(true)``` può essere eseguita direttamente dentro una callback isocrona col tempo base. Più chiamate consecutive realizzano ciascuna un tick invocando tutti i task ad esso associati.
 - **```void timerISR(void)```**. ISR richiamata ad intervalli regolari da un timer HW (interrupt).
+
+### **Sitografia:**
+
+- https://www.ics.uci.edu/~givargis/pubs/C50.pdf
+- https://www.cs.ucr.edu/~vahid/rios/
+
