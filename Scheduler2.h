@@ -98,13 +98,13 @@ class TCB{
 	public:
 		Evnt *events[NEVENTS];
 		//uint8_t pos;
-		uint8_t fe;// first empty
+		uint8_t fe=0;// first empty
 		uint8_t enabled;
-		unsigned long step;
-		unsigned long prec;
+		unsigned long step=0;
+		unsigned long prec=0;
 		unsigned long elapsed=0;
-		unsigned long time;
-		TCB(){step = 0; time = 0; enabled = 0; fe = 0;};
+		unsigned long time=0;
+		TCB(){};
 		bool addEvent(Evnt *);
 		void sort(Evnt **, uint8_t);
 		void scambia(Evnt **, Evnt **);
@@ -122,7 +122,7 @@ class Scheduler: public Sched{
 		TCB tasks[NTIMES];
 		unsigned long tbase;
 		unsigned long prec=0;
-		volatile unsigned long step;
+		//volatile unsigned long step;
 		unsigned long gcd(unsigned long, unsigned long);
 		unsigned long nsteps;
 		unsigned long findGCD();
@@ -143,7 +143,7 @@ class Scheduler: public Sched{
 		void scheduleAll();
 		void scheduleAllISRFlagged(bool noflag=false);
 		unsigned getTimebase();
-		unsigned long getNsteps();
+		//unsigned long getNsteps();
 		long getTime(unsigned long when);
 		bool getEventState(uint8_t priority, unsigned long every);
 		bool setEventState(uint8_t priority, bool state, unsigned long every);
