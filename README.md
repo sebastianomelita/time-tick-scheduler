@@ -35,6 +35,8 @@ La libreria permette un'**alternativa** al **ricampionamento nel loop(**) per co
 
 - Simulazione su ESP32 con Wokwi di **task schedulati da interrupt** in una ISR: https://wokwi.com/projects/353402752887006209
 
+- Simulazione su ESP32 con Wokwi di **task schedulati da toggle**: https://wokwi.com/projects/353405525014893569
+
 
 ### **Metodi** della classe **```Scheduler()```**:		
     		
