@@ -332,6 +332,15 @@ bool Scheduler::setEventState(uint8_t priority, bool state, unsigned long every)
 	}
 }
 
+bool Scheduler::toggleState(uint8_t priority, unsigned long every){
+	bool state = getEventState(priority, every);
+	if(state){
+		disableEvent(priority,every);
+	}else{
+		disableEvent(priority, every);
+	}
+}
+
 bool Scheduler::disableEvent(uint8_t priority, unsigned long every){// call as needed everywhere on runtime
 	bool ok = false;
 	int p = timeSearch(every, tasks, nt);
