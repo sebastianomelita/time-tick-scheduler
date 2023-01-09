@@ -315,11 +315,11 @@ bool Scheduler::addAsyncEvent(PEventCallback pevnt, uint8_t priority, unsigned l
 
 bool Scheduler::getEventState(uint8_t priority, unsigned long every){
 	bool ok = false;
-	int pos; 
 	
 	int p = timeSearch(every, tasks, nt);
+	//Serial.print("p: ");Serial.println(p);
 	if(p >= 0){
-		tasks[p].getEventState(priority);
+		ok = tasks[p].getEventState(priority);
 	}
 	return ok;
 }
@@ -334,11 +334,13 @@ bool Scheduler::setEventState(uint8_t priority, bool state, unsigned long every)
 
 bool Scheduler::toggleEvent(uint8_t priority, unsigned long every){
 	bool state = getEventState(priority, every);
+	Serial.print("state: ");Serial.println(state);
 	if(state){
 		disableEvent(priority,every);
 	}else{
-		disableEvent(priority, every);
+		enableEvent(priority, every);
 	}
+	return getEventState(priority, every);
 }
 
 bool Scheduler::disableEvent(uint8_t priority, unsigned long every){// call as needed everywhere on runtime
