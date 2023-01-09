@@ -17,7 +17,7 @@ Il **numero massimo dei tick** prima della rotazione è calcolato automaticament
 
 Se più task con **periodicità diversa** occorrono nello stesso tempo (tick), viene data priorità a quelli **più lenti** dimodochè se un eventuale **ritardo** di un **task veloce** dovesse spalmarsi su più tick rapidi, l'**errore di tempo** introdotto coinvolgerebbe solo il **primo tick breve** successivo e non avrebbe effetto sui **tick lenti** (di periodicità più grande) dato che sono sempre **serviti prima**.
 
-La libreria permette un'**alternativa** al **ricampionamento nel loop(**) e al **riordinamento** per tempi decrescenti dei task per compensare i **ritardi** di un task, sfruttando la proprietà di **prerilascio** forzato di un task che possiedono gli interrupt. Se i tick sono **interrupt based** allora essi accadono sempre e comunque nel tempo esatto a loro deputato anche in presenza di un task che **ritarda** la sua esecuzione. 
+La libreria permette un'**alternativa** al **ricampionamento nel loop(**) per compensare i **ritardi** di un task, sfruttando la proprietà di **prerilascio** forzato di un task che possiedono gli interrupt. Se i tick sono **interrupt based** allora essi accadono sempre e comunque nel tempo esatto a loro deputato anche in presenza di un task che **ritarda** la sua esecuzione. 
 
 **Esempi:**
 
