@@ -149,7 +149,7 @@ class Scheduler: public Sched{
 		bool setEventState(uint8_t priority, bool state, unsigned long every);
 		bool enableEvent(uint8_t priority, unsigned long every);
 		bool disableEvent(uint8_t priority, unsigned long every);
-		bool toggleState(uint8_t priority, unsigned long every);
+		bool toggleEvent(uint8_t priority, unsigned long every);
 		void timerISR(void);
 };
 
