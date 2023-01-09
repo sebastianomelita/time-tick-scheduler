@@ -24,7 +24,7 @@ void AsyncEvntA::doEvent(unsigned long step){
 */
 Scheduler::Scheduler(){
 	prec=0;
-	step=0;
+	//step=0;
 	nt = 1;
 	timerFlag = false;
 }
@@ -40,13 +40,13 @@ long Scheduler::getTime(unsigned long when){
 
 void Scheduler::setTimes(){
 	tbase = findGCD();
-	Serial.print("mcm: ");Serial.println(mcm);
+	//Serial.print("mcm: ");Serial.println(mcm);
 	//Serial.print("tbase: ");Serial.println(tbase);
 	for(int i=1; i < nt; i++){
 		tasks[i].step = tasks[i].time / tbase; 
 		Serial.print("step: ");Serial.println(tasks[i].step);
 	}
-	maxstepCalc();
+	//maxstepCalc();
 }
 /*
 unsigned Scheduler::init(){
@@ -58,11 +58,11 @@ unsigned Scheduler::init(){
 unsigned Scheduler::getTimebase(){
 	return tbase;
 }
-
+/*
 unsigned long Scheduler::getNsteps(){
 	return nsteps;
 }
-
+*/
 void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 	// max speed scheduled events
 	for(int j=0; j < tasks[nt-1].enabled; j++){// only the first time
@@ -88,7 +88,7 @@ void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 				for(int j=0; j < tasks[i].enabled; j++){
 					//Serial.print(" j: ");
 					//Serial.println(j);
-					tasks[i].events[j]->doEvent(step);// event callback function call	
+					tasks[i].events[j]->doEvent(tasks[i].step);// event callback function call	
 				}
 				//tasks[i].prec += tasks[i].time;
 			}
@@ -116,7 +116,7 @@ void Scheduler::scheduleAllISRFlagged(bool noflag){// scheduler engine. Place th
 				for(int j=0; j < tasks[i].enabled; j++){
 					//Serial.print(" j: ");
 					//Serial.println(j);
-					tasks[i].events[j]->doEvent(step);// event callback function call	
+					tasks[i].events[j]->doEvent(tasks[i].step);// event callback function call	
 				}
 				tasks[i].elapsed = 0;
 			}
@@ -430,20 +430,13 @@ void Scheduler::timeSort(TCB* list, uint8_t fe){
         }
     } 
 }
-
+/*
 void Scheduler::maxstepCalc(){
-	/*
-	nsteps = tasks[1].step;
-	int i;
-	for(i=2; i<nt; i++) {
-		if(nsteps < tasks[i].step){
-			nsteps = tasks[i].step;
-		}
-	}*/
 	//unsigned long div = nsteps / tasks[i].step;
 	Serial.print("mcm: ");Serial.println(mcm);
 	if(tbase>0)
 		nsteps = mcm / tbase;
 	Serial.print("nsteps: ");Serial.println(nsteps);
 }
+*/
 //END HELPER FUNCTIONS---------------------------------------------------------------------------------------------
