@@ -49,7 +49,6 @@ La libreria permette un'**alternativa** al **ricampionamento nel loop(**) per co
 	- ```every```: slot temporale in cui l'evento deve essere ripetuto. La funzione definisce un nuovo slot se non ne esiste uno con un tempo uguale, oppure si limita ad associare l'evento ad uno slot esistente. In unione al campo priority **identifica** l'evento aperiodico.
 - **```void scheduleAll()```**. Esegue tutti i task. Da inserire nel loop() o in una callback richiamata ad intervalli regolari.
 - **```unsigned getTimebase()```**. Restituisce il tempo base dei time tick.
-- **```unsigned long getNsteps()```**. Restituisce il massimo valore del conteggio circolare dei time tick.
 - **```long getTime(unsigned long when)```**. Restituisce il conteggio in time tick del tempo fornito come parametro.
 - **```bool getEventState(uint8_t priority, unsigned long every)```**. Restituisce lo stato (abilitato o disabilitato) di un evento. Un evento è identificato dalla coppia (tempo every in millisecondi, priority).
 - **```bool setEventState(uint8_t priority, bool state, unsigned long every)```**. Imposta lo stato (abilitato o disabilitato) di un evento.
