@@ -66,8 +66,6 @@ void setup() {
 	Serial.print(F("Time base: "));
 	tbase = scheduler.getTimebase();
 	Serial.println(tbase);
-	Serial.print(F("Nsteps: "));
-	Serial.println(scheduler.getNsteps());
 	periodicTicker1.attach_ms(tbase, timerISR);
 }
  
