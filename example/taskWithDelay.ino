@@ -1,4 +1,3 @@
-
 #include "Scheduler2.h"
 int led1 = 13;
 int led2 = 12;
@@ -41,17 +40,16 @@ void periodicBlink(int led) {
 void ontwosec(){
 	  unsigned long now = millis();
 		unsigned long diff = now-prevMillis;
-		prevMillis = now;
 		//diff = diff%50;
 		Serial.print("ontwosec: ");Serial.println(diff);
-		
 		periodicBlink(led2);
+		prevMillis = now;
 }
 
 void onHalfSecondEvents(){
-	unsigned randomDelay = random(1, 100);
+	unsigned randomDelay = random(1, 200);
 	Serial.print("delay: ");Serial.println(randomDelay);
-	//delay(randomDelay);
+	delay(randomDelay);
 	periodicBlink(led1);
 }
 
