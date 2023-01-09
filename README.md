@@ -35,7 +35,7 @@ La libreria permette un'**alternativa** al **ricampionamento nel loop(**) per co
 
 - Simulazione su ESP32 con Wokwi di **task schedulati da interrupt** in una ISR: https://wokwi.com/projects/353402752887006209
 
-- Simulazione su ESP32 con Wokwi di **task schedulati da toggle**: https://wokwi.com/projects/353405525014893569
+- Simulazione su ESP32 con Wokwi di **task schedulati mediante toggleEvent()**: https://wokwi.com/projects/353405525014893569
 
 
 ### **Metodi** della classe **```Scheduler()```**:		
@@ -57,6 +57,7 @@ La libreria permette un'**alternativa** al **ricampionamento nel loop(**) per co
 - **```bool setEventState(uint8_t priority, bool state, unsigned long every)```**. Imposta lo stato (abilitato o disabilitato) di un evento.
 - **```bool enableEvent(uint8_t priority, unsigned long every)```**. Abilita un evento identificato dalla coppia (tempo every in millisecondi, priority).
 - **```bool disableEvent(uint8_t priority, unsigned long every)```**. Disabilita un evento identificato dalla coppia (tempo every in millisecondi, priority).
+- **```bool toggleEvent(uint8_t priority, unsigned long every)```**.  cambia lo stato di un evento identificato dalla coppia (tempo every in millisecondi, priority).
 - **```void scheduleAllISRFlagged(bool noflag=false)```**. Esegue tutti i task su segnalazione di un flag asserito dalla ```void timerISR()``` . Da inserire nel ```loop()``` dove viene eseguito il polling del flag ad ogni ciclo. Una chiamata esegue i task associati ad un tick solo se il flag è asserito, altrimenti non esegue nulla.
 	- ```noflag```: disabilita il check del flag di task in esecuzione. Di default a false. Settarlo a false se ```void scheduleAllISRFlagged(true)``` può essere eseguita direttamente dentro una callback isocrona col tempo base. Più chiamate consecutive realizzano ciascuna un tick invocando tutti i task ad esso associati.
 - **```void timerISR(void)```**. ISR richiamata ad intervalli regolari da un timer HW (interrupt).
