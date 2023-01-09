@@ -41,6 +41,7 @@ void epoch20sec(){
 void onHalfSecondEvents(){
 	periodicBlink(led1);
 }
+
 void onSecondEvents(){
 	periodicBlink(led2);
 }
