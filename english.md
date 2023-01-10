@@ -1,21 +1,39 @@
 >[versione italiana](README.md)
 
-Task scheduler based on time ticks
+Task scheduler based on [time ticks](https://github.com/sebastianomelita/ArduinoBareMetal/blob/master/tasksched.md)
 
-Choose the various times in play in an appropriate manner, such as to allow easy automatic calculation of both the base time (so that it is not too small) and the sentinel counters of the time ticks of the events (multiples of the base time).
+Choose the various **times in play** in an appropriate manner, such as to allow easy automatic calculation of both the **base time** (so that it is not too small) and the **sentinel counters** of the time ticks of the events (multiples of the base time).
 
-Events can be inserted, associated with their times, without following a particular order of invocations using one of the two functions addPeriodicEvent() and addAsyncEvent().
+**Events** can be **inserted**, associated with their times, **without** following a particular **order** of invocations using one of the two functions ```addPeriodicEvent()``` and ` ``addAsyncEvent()```.
 
-It should be noted that:
+To ** bear in mind ** that:
+- For **each time** defined in the scheduler it is possible to enter up to **127 events**, a limit imposed by the bit depth chosen for some counting variables.
+- ```#define NEVENTS``` in the Scheduler2.h file defines the current maximum number, for **default set to 20**
+- ```#define NTIMES``` in the Scheduler2.h file defines the current maximum number, for **default set to 20**
 
-- For each time defined in the scheduler it is possible to enter up to 127 events, a limit imposed by the bit depth chosen for some counting variables.
-- #define NEVENTS in the Scheduler2.h file defines the current maximum number, by default set to 20
-- #define NTIMES in the Scheduler2.h file defines the current maximum number, by default set to 20
-The time base of the time tick() is chosen automatically by calculating the greatest common divisor of the various times in play.
+The **time base** of the time ticks() is automatically chosen by calculating the **greatest common divisor** of the various times involved.
 
-If several tasks with different periodicity occur in the same time (tick), priority is given to the slower ones so that if any delay of a fast task were to spread over several fast ticks, the time error introduced would involve only the first successive short tick and would have no effect on slow ticks (of higher periodicity) since they are always served first.
+If several tasks with **different periodicity** occur at the same time (tick), priority is given to the **slower** ones so that if any **delay** of a **fast task** were to spread across several fast ticks, the introduced **time error** would affect only the following **first short tick** and would have no effect on **slow ticks** (of greater periodicity) since they are always **served first* *.
 
-The library allows an alternative to resampling in loop() to compensate for task delays, by exploiting the forced prerelease property of a task that has interrupts. If the ticks are interrupt based then they always occur in the exact time assigned to them even in the presence of a task that delays its execution.
+The library allows an **alternative** to **resampling in the loop(**) to compensate for **delays** of a task, exploiting the forced **prerelease** property of a task that has interrupts. If the ticks are **interrupt based** then they always occur in the exact time assigned to them even in the presence of a task that **delays** its execution.
+
+**Examples:**
+
+- Simulation on ESP32 with Wokwi of an example of **periodic scheduling**: https://wokwi.com/projects/352057010320512001
+
+- Simulation on ESP32 with Wokwi of an example of **asynchronous timer**: https://wokwi.com/projects/352243906494838785
+
+- Simulation on ESP32 with Wokwi of an example with **every loop** scheduling: https://wokwi.com/projects/352419045941500929
+
+- Simulation on ESP32 with Wokwi of a debouncer example for **toggle button**: https://wokwi.com/projects/352463685677474817
+
+- Simulation on ESP32 with Wokwi of a test example for **tasks with random delay**: https://wokwi.com/projects/352549012781285377
+
+- ESP32 simulation with Wokwi test for **random delay** tasks with ISR: https://wokwi.com/projects/353217720393475073
+
+- Simulation on ESP32 with Wokwi of **interrupt-scheduled tasks** in an ISR: https://wokwi.com/projects/353402752887006209
+
+- Simulation on ESP32 with Wokwi of **tasks scheduled via toggleEvent()**: https://wokwi.com/projects/353405525014893569
 
 ### **Methods** of class **```Scheduler()```**:
     		
