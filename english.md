@@ -38,3 +38,8 @@ The library allows an alternative to resampling in loop() to compensate for task
 	- ```noflag```: disable flag check of running task. Defaults to false. Set it to false if ```void scheduleAllISRFlagged(true)``` can be executed directly inside an isochronous time-base callback. Several consecutive calls each make a tick by invoking all the tasks associated with it.
 - **```void timerISR(void)```**. ISR called at regular intervals by a HW timer (interrupt).
 
+### **Sitography:**
+
+- https://www.ics.uci.edu/~givargis/pubs/C50.pdf
+- https://www.cs.ucr.edu/~vahid/rios/
+
