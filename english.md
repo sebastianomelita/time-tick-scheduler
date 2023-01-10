@@ -8,7 +8,7 @@ Choose the various **times in play** in an appropriate manner, such as to allow 
 
 **Events** can be **inserted**, associated with their times, **without** following a particular **order** of invocations using one of the two functions ```addPeriodicEvent()``` and ` ``addAsyncEvent()```.
 
-To ** bear in mind ** that:
+To **bear in mind** that:
 - For **each time** defined in the scheduler it is possible to enter up to **127 events**, a limit imposed by the bit depth chosen for some counting variables.
 - ```#define NEVENTS``` in the Scheduler2.h file defines the current maximum number, for **default set to 20**
 - ```#define NTIMES``` in the Scheduler2.h file defines the current maximum number, for **default set to 20**
