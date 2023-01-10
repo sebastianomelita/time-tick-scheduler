@@ -6,7 +6,7 @@ Task scheduler based on [time ticks](https://github.com/sebastianomelita/Arduino
 
 Choose the various **times in play** in an appropriate manner, such as to allow easy automatic calculation of both the **base time** (so that it is not too small) and the **sentinel counters** of the time ticks of the events (multiples of the base time).
 
-**Events** can be **inserted**, associated with their times, **without** following a particular **order** of invocations using one of the two functions ```addPeriodicEvent()``` and ` ``addAsyncEvent()```.
+**Events** can be **inserted**, associated with their times, **without** following a particular **order** of invocations using one of the two functions ```addPeriodicEvent()``` and ```addAsyncEvent()```.
 
 To **bear in mind** that:
 - For **each time** defined in the scheduler it is possible to enter up to **127 events**, a limit imposed by the bit depth chosen for some counting variables.
