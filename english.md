@@ -1,3 +1,5 @@
+>[versione italiana](README.md)
+
 Task scheduler based on time ticks
 
 Choose the various times in play in an appropriate manner, such as to allow easy automatic calculation of both the base time (so that it is not too small) and the sentinel counters of the time ticks of the events (multiples of the base time).
@@ -43,3 +45,4 @@ The library allows an alternative to resampling in loop() to compensate for task
 - https://www.ics.uci.edu/~givargis/pubs/C50.pdf
 - https://www.cs.ucr.edu/~vahid/rios/
 
+>[versione italiana](README.md)
