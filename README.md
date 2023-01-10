@@ -1,4 +1,4 @@
-# time-tick-scheduler
+# time-tick-scheduler > [in english](english.md)
 
 Schedulatore di compiti basato sui [time tick](https://github.com/sebastianomelita/ArduinoBareMetal/blob/master/tasksched.md)
 
@@ -63,4 +63,6 @@ La libreria permette un'**alternativa** al **ricampionamento nel loop(**) per co
 
 - https://www.ics.uci.edu/~givargis/pubs/C50.pdf
 - https://www.cs.ucr.edu/~vahid/rios/
+
+ > [in english](english.md)
 
