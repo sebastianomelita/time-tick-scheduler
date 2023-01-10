@@ -1,4 +1,4 @@
->[versione italiana](README.md)
+>[Versione italiana](README.md)
 
 Task scheduler based on [time ticks](https://github.com/sebastianomelita/ArduinoBareMetal/blob/master/tasksched.md)
 
@@ -63,4 +63,4 @@ The library allows an **alternative** to **resampling in the loop(**) to compens
 - https://www.ics.uci.edu/~givargis/pubs/C50.pdf
 - https://www.cs.ucr.edu/~vahid/rios/
 
->[versione italiana](README.md)
+>[Versione italiana](README.md)
