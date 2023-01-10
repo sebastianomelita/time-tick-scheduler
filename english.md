@@ -15,7 +15,7 @@ To **bear in mind** that:
 
 The **time base** of the time ticks() is automatically chosen by calculating the **greatest common divisor** of the various times involved.
 
-If several tasks with **different periodicity** occur at the same time (tick), priority is given to the **slower** ones so that if any **delay** of a **fast task** were to spread across several fast ticks, the introduced **time error** would affect only the following **first short tick** and would have no effect on **slow ticks** (of greater periodicity) since they are always **served first* *.
+If several tasks with **different periodicity** occur at the same time (tick), priority is given to the **slower** ones so that if any **delay** of a **fast task** were to spread across several fast ticks, the introduced **time error** would affect only the following **first short tick** and would have no effect on **slow ticks** (of greater periodicity) since they are always **served first**.
 
 The library allows an **alternative** to **resampling in the loop(**) to compensate for **delays** of a task, exploiting the forced **prerelease** property of a task that has interrupts. If the ticks are **interrupt based** then they always occur in the exact time assigned to them even in the presence of a task that **delays** its execution.
 
