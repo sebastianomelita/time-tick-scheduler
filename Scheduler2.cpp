@@ -262,7 +262,7 @@ int Scheduler::addTime(unsigned long when){
 }
 
 // nt: event index. 0:max_speed, 1:first_time_scheduled, 2:second_time_scheduled,...
-bool Scheduler::addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigned long every){// periodic events reggistration. Place this in setup().
+bool Scheduler::addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigned long every, bool enabled){// periodic events reggistration. Place this in setup().
 	bool ok = true;
 	
 	int p = addTime(every);
@@ -271,6 +271,8 @@ bool Scheduler::addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigne
 		//Serial.print("p add: ");Serial.println(p);
 		if(tasks[p].addEvent(new PeriodicEvnt(this, every, pevnt, priority, true, PERIODIC))){
 			setTimes();
+			if(!enabled)
+				tasks[p].disableEvent(priority);
 		}
 	}else{
 		ok = false;
