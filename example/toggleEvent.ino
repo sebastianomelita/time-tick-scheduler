@@ -21,7 +21,8 @@ void periodicBlink(int led) {
 
 void epoch10secToggle(){
 	Serial.print("Toggle: ");
-	digitalWrite(led2, scheduler.toggleEvent(1,1000));
+	if(scheduler.toggleEvent(1,1000)==false)
+		digitalWrite(led2, LOW);
 }
 
 void onHalfSecondEvents(){
