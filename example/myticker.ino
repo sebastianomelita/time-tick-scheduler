@@ -24,6 +24,7 @@ void epoch10secDisable(){
 	scheduler.disableEvent(1,500);
 	scheduler.enableEvent(1,10000);
 	scheduler.disableEvent(2,10000);
+	//scheduler.toggleEvent(2,10000);
 	digitalWrite(led1, LOW);
 	digitalWrite(led2, LOW);
 	Serial.println("Ending timers...");
@@ -37,6 +38,7 @@ void epoch10secEnable(){
 	scheduler.enableEvent(1,500);
 	scheduler.disableEvent(1,10000);
 	scheduler.enableEvent(2,10000);
+	//scheduler.toggleEvent(2,10000);
 	Serial.println("Starting timers...");
 }
 
@@ -56,6 +58,7 @@ void setup() {
 	scheduler.addPeriodicEvent(epoch10secEnable, 1, 10000);
 	scheduler.addPeriodicEvent(epoch10secDisable, 2, 10000);
 	scheduler.addPeriodicEvent(onSecondEvents, 1, 1000);
+	scheduler.disableEvent(1,10000);
 	Serial.println(F("Scheduler init"));
 	Serial.print(F("Time base: "));
 	Serial.println(scheduler.getTimebase());
