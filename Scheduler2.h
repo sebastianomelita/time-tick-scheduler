@@ -138,7 +138,7 @@ class Scheduler: public Sched{
 	public:
 		Scheduler();
 		void init();
-		bool addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigned long every);
+		bool addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigned long every, bool enabled = true);
 		bool addAsyncEvent(PEventCallback pevnt, uint8_t priority, unsigned long when, unsigned long howlong, unsigned long every, bool repeat);
 		void scheduleAll();
 		void scheduleAllISRFlagged(bool noflag=false);
