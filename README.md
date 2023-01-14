@@ -41,7 +41,7 @@ La libreria permette un'**alternativa** al **ricampionamento nel loop(**) per co
 ### **Metodi** della classe **```Scheduler()```**:		
     		
 - **```Scheduler()```** Costruttore
-- **```bool addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigned long every, bool enabled)```**. Aggiunge un evento periodico definito da:
+- **```bool addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigned long every, bool enabled = true)```**. Aggiunge un evento periodico definito da:
 	- ```pevnt```: callback evento da schedulare
 	- ```priority``` ordine di esecuzione oppure id del task in un certo slot temporale
 	- ```every```: slot temporale in cui l'evento deve essere ripetuto. La funzione definisce un nuovo slot se non esiste uno con un tempo uguale, oppure si limita ad associare l'evento ad uno slot esistente. In unione al campo priority **identifica** l'evento periodico.
