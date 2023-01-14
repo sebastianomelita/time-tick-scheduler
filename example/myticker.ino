@@ -55,10 +55,9 @@ void setup() {
 	Serial.begin(115200); 
 	//scheduler.addEvent(onMaxSpeedEvents, 1, 0);
 	scheduler.addPeriodicEvent(onHalfSecondEvents, 1, 500);
-	scheduler.addPeriodicEvent(epoch10secEnable, 1, 10000);
+	scheduler.addPeriodicEvent(epoch10secEnable, 1, 10000, false);
 	scheduler.addPeriodicEvent(epoch10secDisable, 2, 10000);
 	scheduler.addPeriodicEvent(onSecondEvents, 1, 1000);
-	scheduler.disableEvent(1,10000);
 	Serial.println(F("Scheduler init"));
 	Serial.print(F("Time base: "));
 	Serial.println(scheduler.getTimebase());
