@@ -297,12 +297,14 @@ bool Scheduler::addAsyncEvent(PEventCallback pevnt, uint8_t priority, unsigned l
 			tasks[p].addEvent(slave); // add async event as disabled
 			//setTimes();
 		}
+		/*
 		PeriodicEvnt *dummy = new PeriodicEvnt(this, when+howlong, NULL, DISABLED-1, false, PERIODIC);// not enabled
 		p = addTime(when+howlong);
 		if(p>=0){
 			tasks[p].addEvent(dummy); // add async event as disabled
 			setTimes();
 		}
+		*/
 	}else{
 		ok = false;
 		Serial.println("ERRORE: indice di un tempo fuori range");
