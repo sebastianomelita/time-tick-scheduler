@@ -310,7 +310,7 @@ bool Scheduler::addAsyncEvent(PEventCallback pevnt, uint8_t priority, unsigned l
 		Serial.println("ERRORE: indice di un tempo fuori range");
 	}
 	Serial.print("every: ");Serial.println(every);	
-	Serial.print("dummy: ");Serial.println(when+howlong); 	
+	//Serial.print("dummy: ");Serial.println(when+howlong); 	
 	for(int i=0; i<nt; i++) {
 		Serial.println(tasks[i].time);
 	}
