@@ -25,13 +25,13 @@ void AsyncEvntA::doEvent(unsigned long step){
 Scheduler::Scheduler(){
 	prec=0;
 	//step=0;
-	nt = 1;
+	nt = 0;
 	timerFlag = false;
 }
 
 long Scheduler::getTime(unsigned long when){
-	unsigned t = -1;
-	int p = timeSearch(when, tasks, nt);
+	unsigned t = 0;
+	int p = timeSearch(when, tasks);
 	if(p >= 0){
 		t = tasks[p].step;
 	}
@@ -42,7 +42,7 @@ void Scheduler::setTimes(){
 	tbase = findGCD();
 	//Serial.print("mcm: ");Serial.println(mcm);
 	//Serial.print("tbase: ");Serial.println(tbase);
-	for(int i=1; i < nt; i++){
+	for(int i=0; i < nt-1; i++){
 		tasks[i].step = tasks[i].time / tbase; 
 		Serial.print("step: ");Serial.println(tasks[i].step);
 	}
@@ -65,8 +65,10 @@ unsigned long Scheduler::getNsteps(){
 */
 void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 	// max speed scheduled events
-	for(int j=0; j < tasks[nt-1].enabled; j++){// only the first time
-		(*tasks[nt-1].events[j]->pevent)();// event callback function call
+	for(int j=0; j < tasks[nt-1].fe; j++){// only the first time
+		if(tasks[nt-1].events[j]->enabled)
+			(*tasks[nt-1].events[j]->pevent)();// event callback function call
+		
 	}
 	
 	if(millis()-prec >= tbase){ //schedulatore per tempo base 
@@ -85,12 +87,13 @@ void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 				//tasks[i].prec += tasks[i].time;
 				//tasks[i].prec = prec;
 				//Serial.println("++++++++++++++++++++++++++++++++++++++");
-				for(int j=0; j < tasks[i].enabled; j++){
+				for(int j=0; j < tasks[i].fe; j++){// fino all'ultimo della lista
 					//Serial.print(" j: ");
 					//Serial.println(j);
-					tasks[i].events[j]->doEvent(tasks[i].step);// event callback function call	
+					if(tasks[i].events[j]->enabled)// se l'evento è abilitato
+						tasks[i].events[j]->doEvent(tasks[i].step);// event callback function call	
 				}
-				//tasks[i].prec += tasks[i].time;
+					//tasks[i].prec += tasks[i].time;
 			}
 		}
 	}
@@ -106,17 +109,18 @@ void Scheduler::scheduleAllISRFlagged(bool noflag){// scheduler engine. Place th
 	
 	if(timerFlag || noflag){ //schedulatore per tempo base 
 		// variely timed scheduled events
-		for(int i=0; i < nt; i++){// all times except the first
+		for(int i=0; i < nt-1; i++){// all times except the first
 			//Serial.println("------------------------------------------");
 			//Serial.print("i: ");Serial.println(i);
 			//Serial.print("Steplist: ");
 			//Serial.println(tasks[i].step);
 			if(tasks[i].elapsed >= tasks[i].time){
 				//Serial.println("++++++++++++++++++++++++++++++++++++++");
-				for(int j=0; j < tasks[i].enabled; j++){
+				for(int j=0; j < tasks[i].fe; j++){// fino all'ultimo della lista
 					//Serial.print(" j: ");
 					//Serial.println(j);
-					tasks[i].events[j]->doEvent(tasks[i].step);// event callback function call	
+					if(tasks[i].events[j]->enabled)// se l'evento è abilitato
+						tasks[i].events[j]->doEvent(tasks[i].step);// event callback function call	
 				}
 				tasks[i].elapsed = 0;
 			}
@@ -138,9 +142,13 @@ void Scheduler::timerISR(void) {
    return;
 }
 
-int TCB::cerca(uint8_t order, Evnt **list,int pempty){
+int TCB::getNEvents(){
+	return fe + 1;
+}
+
+int TCB::cerca(uint8_t order, Evnt **list){
    int min=0;
-   int max=pempty-1;
+   int max=fe-1;
    int med;
    int c;
    
@@ -159,8 +167,8 @@ int TCB::cerca(uint8_t order, Evnt **list,int pempty){
    }
    return med;
 }
-
-void TCB::sort(Evnt **evnts, uint8_t fe){
+// ordinamento crescente
+void TCB::sort(Evnt **evnts){
     int i,j;
 	for(i=fe-1; i>=0; i--) {
         for(j=0; j<i; j++){
@@ -185,21 +193,56 @@ bool TCB::addEvent(Evnt *evnt){
 	if(fe < NEVENTS){
 		//evnt->pos = fe;
 		events[fe] = evnt;// default enabled
+		Serial.print("fe prima add ");Serial.println(fe);
 		fe++;// first empty
+		Serial.print("fe dopo add ");Serial.println(fe);
 		if(evnt->enabled){
 			enabled++; // counter of enabled increment
 		}else{
 			evnt->order = evnt->order + DISABLED;
 		}
-		sort(events, fe);// sort by priority
+		sort(events);// sort by priority
 		ok = true;
+	}
+	return ok;
+}
+
+bool TCB::delEvent(uint8_t order, bool test){
+	bool ok = false;	
+	
+	Serial.print("test: ");Serial.println(test);
+	int pos = cerca(order,events);
+	if(pos < 0){
+		pos = cerca(order + DISABLED,events);
+	}
+	
+	if(pos >= 0){
+		Serial.print("fe prima canc ");Serial.println(fe);
+		Serial.print("evento trovato in posizione ");Serial.println(pos);
+		if(!test){
+			delete events[pos];// garbace of the deleted event object
+			for(int i = pos; i+1 < fe; i++){
+				events[i] = events[i+1];
+			}
+			fe--;// first empty
+			Serial.println("Del event: evento cancellato");
+			Serial.print("fe: ");Serial.println(fe);
+			Serial.println("Inizio stampa eventi--: ");
+			for(int i=0; i<fe; i++) {
+				Serial.println(events[i]->order);
+			}
+			Serial.println("Fine stampa eventi--: ");
+		}
+		ok = true;
+	}else{
+		Serial.println("evento non trovato");
 	}
 	return ok;
 }
 
 bool TCB::getEventState(uint8_t order){
 	bool ok = false;
-	int pos = cerca(order,events,fe);
+	int pos = cerca(order,events);
 	if(pos >= 0){
 		ok = events[pos]->enabled;
 	}
@@ -208,13 +251,13 @@ bool TCB::getEventState(uint8_t order){
 
 bool TCB::enableEvent(uint8_t order){
 	bool ok = false;
-	int pos = cerca(order + DISABLED,events,fe);
+	int pos = cerca(order + DISABLED,events);
 	//Serial.print("pos ");Serial.println(pos);		
 	if(pos >= 0 && !events[pos]->enabled){// check if disabled for first
 		//Serial.print("Enable made ");Serial.println(pos);	
 		events[pos]->enabled = true;
 		events[pos]->order = events[pos]->order - DISABLED;
-		sort(events, fe);// place enabled on lower order zone
+		sort(events);// place enabled on lower order zone
 		enabled++;
 		ok = true;
 	}
@@ -223,13 +266,13 @@ bool TCB::enableEvent(uint8_t order){
 
 bool TCB::disableEvent(uint8_t order){
 	bool ok = false;
-	int pos = cerca(order,events,fe);
+	int pos = cerca(order,events);
 	//Serial.print("pos: ");Serial.println(pos);	
 	if(pos >= 0 && events[pos]->enabled){// check if enabled for first
 		//Serial.print("Dis made ");Serial.println(pos);	
 		events[pos]->enabled = false;
 		events[pos]->order = events[pos]->order + DISABLED;
-		sort(events, fe);// place disabled on greatest order zone
+		sort(events);// place disabled on greatest order zone
 		enabled--;
 		ok = true;
 	}
@@ -242,23 +285,54 @@ int Scheduler::addTime(unsigned long when){
 	if(when==0){
 		p=0;
 	}else{
-		p = timeSearch(when, tasks, nt);
+		p = timeSearch(when, tasks);
 	}
 	*/
 	Serial.print("when: ");Serial.println(when);	
-	p = timeSearch(when, tasks, nt);
+	p = timeSearch(when, tasks);
 	Serial.print("pos1: ");Serial.println(p);	
 	if(p<0){ // se non lo trova
 		if(nt < NTIMES){
 			tasks[nt].time = when; // lo inserisce
 			tasks[nt].elapsed = tasks[nt].time; // time init
+			tasks[nt].fe = 0; // reset first empty
 			//tasks[nt].prec = tasks[nt].time; // time init
 			nt++;
-			timeSort(tasks, nt); // ordina
-			p = timeSearch(when, tasks, nt);
+			timeSort(tasks); // ordina
+			p = timeSearch(when, tasks);
 		}
 	}
 	return p;
+}
+
+bool Scheduler::delTime(unsigned long when){
+	int p = -1;
+
+	Serial.print("when: ");Serial.println(when);	
+	p = timeSearch(when, tasks);
+	Serial.print("pos1: ");Serial.println(p);	
+	return delTimeByPos(p);
+}
+
+bool Scheduler::delTimeByPos(int pos){
+	bool erased = false;
+	Serial.println("pos--");Serial.println(pos);
+	Serial.println("nt del");Serial.println(nt);
+	if(pos >= 0 && pos < nt){ // se è entro il range degli inseriti
+		for(int i = pos; i+1 < nt; i++){
+			tasks[i] = tasks[i+1]; // cancellazione per spostamento a sin
+		}
+		Serial.print("nt--: ");Serial.println(nt);
+	    Serial.println("Stampa tempi--: ");
+		if(nt > 0)
+			nt--;
+		for(int i=0; i<nt; i++) {
+			Serial.println(tasks[i].time);
+		}
+		erased = true;
+		Serial.println("Cancelled");
+	}
+	return erased;
 }
 
 // nt: event index. 0:max_speed, 1:first_time_scheduled, 2:second_time_scheduled,...
@@ -278,14 +352,15 @@ bool Scheduler::addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigne
 		ok = false;
 		Serial.println("ERRORE: indice di un tempo fuori range");
 	}
-	
+	Serial.println("Inizio tempi add:");
 	for(int i=0; i<nt; i++) {
 		Serial.println(tasks[i].time);
 	}
-
+	Serial.println("Fine tempi add:");
 	return ok;
 }
 
+// unica periodicità sul tempo every
 bool Scheduler::addAsyncEvent(PEventCallback pevnt, uint8_t priority, unsigned long when, unsigned long howlong, unsigned long every, bool repeat){// periodic events reggistration. Place this in setup().
 	bool ok = true;
 	
@@ -317,10 +392,36 @@ bool Scheduler::addAsyncEvent(PEventCallback pevnt, uint8_t priority, unsigned l
 	return ok;
 }
 
+bool Scheduler::deletePeriodicEvent(uint8_t priority, unsigned long every, bool test){// periodic events delete
+	bool ok = false;
+	int p = -1;
+	
+	Serial.print("every: ");Serial.println(every);	
+	p = timeSearch(every, tasks);
+	Serial.print("pos: ");Serial.println(p);
+	if(p>=0){
+		if(tasks[p].delEvent(priority, test)){
+			if(tasks[p].fe==0){// se il tempo non contiene alcun evento cancellalo
+				if(!test){
+					if(delTimeByPos(p))
+						Serial.print("tempo ");Serial.print(every);Serial.println(" cancellato.");		
+				}			
+			}
+			ok = true;
+		}else{
+			Serial.print("ERRORE: evento con priorità ");Serial.print(priority);Serial.println(" non trovato.");
+		}
+	}else{
+		Serial.print("ERRORE: tempo ");Serial.print(every);Serial.println(" non trovato.");
+	}
+	Serial.println("dopo 1");
+	return ok;
+}
+
 bool Scheduler::getEventState(uint8_t priority, unsigned long every){
 	bool ok = false;
 	
-	int p = timeSearch(every, tasks, nt);
+	int p = timeSearch(every, tasks);
 	//Serial.print("p: ");Serial.println(p);
 	if(p >= 0){
 		ok = tasks[p].getEventState(priority);
@@ -341,6 +442,7 @@ bool Scheduler::toggleEvent(uint8_t priority, unsigned long every){
 	Serial.print("state: ");Serial.println(state);
 	if(state){
 		disableEvent(priority,every);
+		
 	}else{
 		enableEvent(priority, every);
 	}
@@ -349,7 +451,7 @@ bool Scheduler::toggleEvent(uint8_t priority, unsigned long every){
 
 bool Scheduler::disableEvent(uint8_t priority, unsigned long every){// call as needed everywhere on runtime
 	bool ok = false;
-	int p = timeSearch(every, tasks, nt);
+	int p = timeSearch(every, tasks);
 	//Serial.print("dis time pos: ");Serial.println(p);
 	if(p >= 0){
 		tasks[p].disableEvent(priority);
@@ -359,7 +461,7 @@ bool Scheduler::disableEvent(uint8_t priority, unsigned long every){// call as n
 
 bool Scheduler::enableEvent(uint8_t priority, unsigned long every){// call as needed everywhere on runtime
 	bool ok = false;
-	int p = timeSearch(every, tasks, nt);
+	int p = timeSearch(every, tasks);
 	if(p >= 0){
 		tasks[p].enableEvent(priority);
 	}
@@ -392,15 +494,20 @@ unsigned long Scheduler::findGCD(){
   return mcd;
 }
 
-int Scheduler::timeSearch(unsigned long tosearch, TCB* list, int pempty){
+int Scheduler::timeSearch(unsigned long tosearch, TCB* list){
    int min=0;
-   int max=pempty-1;
+   int max=nt-1;
    int med;
    
    //Serial.println("Begin sort ----------------------------------------------------------");
+   Serial.println("------------------");
+   Serial.print("nt: ");Serial.println(nt);
+   Serial.println("Stampa tempi: ");
+   Serial.println("------------------");
    for(int i=0; i<nt; i++) {
 		Serial.println(tasks[i].time);
 	}
+   Serial.println("------------------");
    while(min<=max){
        med=(min+max)/2;
 	   Serial.println(med);
@@ -416,12 +523,13 @@ int Scheduler::timeSearch(unsigned long tosearch, TCB* list, int pempty){
    if(tosearch != list[med].time){
        med=-1;
    }
+   Serial.print("p: ");Serial.println(med);
    return med;
 }
-
-void Scheduler::timeSort(TCB* list, uint8_t fe){
+// ordinamento decrescente
+void Scheduler::timeSort(TCB* list){
     int i,j;
-	for(i=fe-1; i>=0; i--) {
+	for(i=nt-1; i>=0; i--) {
         for(j=0; j<i; j++){
             if(list[j].time < list[j+1].time){
               TCB app = list[j];

@@ -103,22 +103,24 @@ class TCB{
 		unsigned long step=0;
 		unsigned long prec=0;
 		unsigned long elapsed=0;
-		unsigned long time=0;
+		unsigned long time=-1;
 		TCB(){};
 		bool addEvent(Evnt *);
-		void sort(Evnt **, uint8_t);
+		bool delEvent(uint8_t, bool);
+		void sort(Evnt **);
 		void scambia(Evnt **, Evnt **);
-		int cerca(uint8_t, Evnt **, int);
+		int cerca(uint8_t, Evnt **);
 		bool getEventState(uint8_t order);
 		bool enableEvent(uint8_t);
 		bool disableEvent(uint8_t);
+		int getNEvents();
 		//bool disableEventPos(uint8_t pos);
 		//bool enableEventPos(uint8_t pos);
 };		
 
 class Scheduler: public Sched{
 	private:
-		uint8_t nt;
+		int nt = 0;
 		TCB tasks[NTIMES];
 		unsigned long tbase;
 		unsigned long prec=0;
@@ -126,12 +128,14 @@ class Scheduler: public Sched{
 		unsigned long gcd(unsigned long, unsigned long);
 		unsigned long nsteps;
 		unsigned long findGCD();
-		void timeSort(TCB*, uint8_t);
-		int timeSearch(unsigned long, TCB*, int);
+		void timeSort(TCB*);
+		int timeSearch(unsigned long, TCB*);
 		void maxstepCalc();
 		unsigned long lcm(unsigned long m, unsigned long n, unsigned long g);
 		void setTimes();
 		int addTime( unsigned long);
+		bool delTime(unsigned long);
+		bool delTimeByPos(int);
 		unsigned long mcm;
 		volatile bool timerFlag;
 
@@ -140,6 +144,7 @@ class Scheduler: public Sched{
 		void init();
 		bool addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigned long every, bool enabled = true);
 		bool addAsyncEvent(PEventCallback pevnt, uint8_t priority, unsigned long when, unsigned long howlong, unsigned long every, bool repeat);
+		bool deletePeriodicEvent(uint8_t, unsigned long, bool test = false);
 		void scheduleAll();
 		void scheduleAllISRFlagged(bool noflag=false);
 		unsigned getTimebase();
