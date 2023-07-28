@@ -4,6 +4,8 @@
 
 Schedulatore di compiti basato sui [time tick](https://github.com/sebastianomelita/ArduinoBareMetal/blob/master/tasksched.md)
 
+Lo schedulatore permette la creazione e la cancellazione dinamica a runtime dei task, così come la abilitazione e la disabilitazione delgi stessi, sempre a runtime.
+
 Scegliere i vari **tempi in gioco** in maniera opportuna, tale da consentire un agevole calcolo automatico sia del **tempo base** (in modo che non risulti troppo piccolo) sia dei **contatori sentinella** dei time tick degli eventi (multipli del tempo base).
 
 Gli **eventi** possono essere **inseriti**, associati ai loro tempi, **senza** seguire un **ordine** particolare delle invocazioni utilizzando una delle due funzioni ```addPeriodicEvent()``` e ```addAsyncEvent()```. 
