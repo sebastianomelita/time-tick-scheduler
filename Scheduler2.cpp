@@ -45,8 +45,8 @@ void Scheduler::setTimes(){
 	Serial.print("tbase: ");Serial.println(tbase);
 	for(int i=0; i < nt-1; i++){
 		//if(tbase > 0){
-			tasks[i].step = tasks[i].time / tbase; 
-			Serial.print("step: ");Serial.println(tasks[i].step);
+		tasks[i].step = tasks[i].time / tbase; 
+		Serial.print("step: ");Serial.println(tasks[i].step);
 		//}
 	}
 	//maxstepCalc();
