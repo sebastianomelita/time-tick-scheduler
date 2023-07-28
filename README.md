@@ -37,6 +37,8 @@ La libreria permette un'**alternativa** al **ricampionamento nel loop(**) per co
 
 - Simulazione su ESP32 con Wokwi di **task schedulati mediante toggleEvent()**: https://wokwi.com/projects/353405525014893569
 
+- - Simulazione su ESP32 con Wokwi di **task creati e cancellati dinamicamente a runtime**: https://wokwi.com/projects/371341648643932161
+
 
 ### **Metodi** della classe **```Scheduler()```**:		
     		
