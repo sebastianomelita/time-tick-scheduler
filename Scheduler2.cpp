@@ -24,7 +24,7 @@ void AsyncEvntA::doEvent(unsigned long step){
 */
 Scheduler::Scheduler(){
 	prec=0;
-	//step=0;
+	//step=1;
 	nt = 0;
 	timerFlag = false;
 	addTime(0);
@@ -43,11 +43,11 @@ void Scheduler::setTimes(){
 	tbase = findGCD();
 	Serial.print("mcm: ");Serial.println(mcm);
 	Serial.print("tbase: ");Serial.println(tbase);
-	for(int i=0; i < nt; i++){
-		if(tbase > 0){
+	for(int i=0; i < nt-1; i++){
+		//if(tbase > 0){
 			tasks[i].step = tasks[i].time / tbase; 
 			Serial.print("step: ");Serial.println(tasks[i].step);
-		}
+		//}
 	}
 	//maxstepCalc();
 }
@@ -299,6 +299,7 @@ int Scheduler::addTime(unsigned long when){
 			tasks[nt].time = when; // lo inserisce
 			tasks[nt].elapsed = tasks[nt].time; // time init
 			tasks[nt].fe = 0; // reset first empty
+			tasks[nt].step = 1; 
 			//tasks[nt].prec = tasks[nt].time; // time init
 			nt++;
 			timeSort(tasks); // ordina
@@ -316,7 +317,7 @@ bool Scheduler::delTime(unsigned long when){
 	Serial.print("pos1: ");Serial.println(p);	
 	return delTimeByPos(p);
 }
-
+// in posizione nt-1 ci sta sempre il tempo 0!
 bool Scheduler::delTimeByPos(int pos){
 	bool erased = false;
 	Serial.println("pos--");Serial.println(pos);
@@ -486,15 +487,19 @@ unsigned long Scheduler::findGCD(){
   unsigned long mcd = tasks[0].time;
   unsigned long mcd2 = tasks[0].time;
   mcm = tasks[0].time;
-  //Serial.println("-----------------------------------------------");
-  for (uint8_t i = 1; i < nt; i++)
-  {
-	  if(tasks[i].time != 0){
+  if(tasks[0].time  != 0){
+	  //Serial.println("-----------------------------------------------");
+	  for (uint8_t i = 1; i < nt-1; i++)
+	  {
+		  //if(tasks[i].time != 0){
 		  mcd = gcd(tasks[i].time, mcd);
 		  mcd2 = gcd(tasks[i].time, mcm);
 		  mcm = lcm(tasks[i].time, mcm, mcd2);
+		  //}
+		  //Serial.print("mcm ");Serial.println(mcm);
 	  }
-	  //Serial.print("mcm ");Serial.println(mcm);
+  }else{
+	  mcd = 1;
   }
   return mcd;
 }
