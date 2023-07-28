@@ -45,10 +45,11 @@ The library allows an **alternative** to **resampling in the loop(**) to compens
 	- ```priority``` execution order or id of the task in a certain time slot
 	- ```every```: time slot in which the event should be repeated. The function defines a new slot if there is no one with the same time, or simply associates the event to an existing slot. Together with the priority field, **identifies** the periodic event.
 	- ```enabled```: if is ```true``` (default value) the event is registered and activated, if is ```false``` the event is both registered and activated.
-- **```bool addAsyncEvent(PEventCallback pevnt, uint8_t priority, unsigned long when, unsigned long howlong, unsigned long every, bool repeat)```**.Adds an aperiodic event additionally defined by:
-	- ```when```: time slot in which the event begins. The function defines a new slot if one with the same time does not exist, or simply associates the event to an existing slot.
-	- ```howlong```: how long does the schedule last. A new slot is not defined for this time but for every+howlong time.
-	- ```every```: time slot in which the event should be repeated. The function defines a new slot if one with the same time does not exist, or simply associates the event to an existing slot. Together with the priority field, **identifies** the aperiodic event.
+- **```bool addAsyncEvent(PEventCallback pevnt, uint8_t priority, unsigned long when, unsigned long howlong, unsigned long every, bool repeat)```**. Adds an aperiodic event additionally defined by:
+- ```when```: time slot where the event starts. The function does not define a new slot, it manages a timer updated in poling with the periodicity of the slot ```every```.
+- ```howlong```: how long the scheduling lasts. No new slot is defined for this time but only for the ```every``` time.
+- ```every```: **base** time slot in which the event must be **repeated** (base periodicity). The function defines a new slot if one with the same time does not exist, or simply associates the event to an existing slot. Together with the priority field, **identifies** the aperiodic event. To **cancel**, the event can be identified with the pair (```priority```, ```every```).
+- **```bool Scheduler::deletePeriodicEvent(uint8_t priority, unsigned long every, bool test = false)```**. Deletes a periodic event identified by its priority and its ```every``` base periodicity. clears both periodic and asynchronous events. The optional test parameter performs the "dry" operation for test reasons, i.e. verifying its feasibility without performing any deletion (it only returns the boolean parameter of successful deletion. By default, the test function is disabled.
 - **```void scheduleAll()```**. Perform all tasks. To be inserted in the loop() or in a callback both called at regular intervals.
 - **```unsigned getTimebase()```**. Returns the base time of time ticks.
 - **```long getTime(unsigned long when)```**.Returns the time tick count of the time supplied as a parameter.
