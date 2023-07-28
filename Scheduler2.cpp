@@ -289,10 +289,9 @@ int Scheduler::addTime(unsigned long when){
 		if(nt < NTIMES){
 			tasks[nt].time = when; // lo inserisce
 			tasks[nt].elapsed = tasks[nt].time; // time init
+			tasks[nt].prec = prec -tasks[nt].time; // time init
 			tasks[nt].fe = 0; // reset first empty
 			tasks[nt].step = 1; 
-			tasks[nt].prec = tasks[nt].time; // time init
-			tasks[nt].prec = prec -tasks[nt].time; // time init
 			nt++;
 			timeSort(tasks); // ordina
 			setTimes();
