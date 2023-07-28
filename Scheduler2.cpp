@@ -40,6 +40,7 @@ long Scheduler::getTime(unsigned long when){
 }
 
 void Scheduler::setTimes(){
+	Serial.println("setTimes: -------------");
 	tbase = findGCD();
 	Serial.print("mcm: ");Serial.println(mcm);
 	Serial.print("tbase: ");Serial.println(tbase);
@@ -47,25 +48,17 @@ void Scheduler::setTimes(){
 		//if(tbase > 0){
 		tasks[i].step = tasks[i].time / tbase; 
 		Serial.print("step: ");Serial.println(tasks[i].step);
+		////tasks[i].prec = 0;
 		//}
 	}
-	//maxstepCalc();
+	////prec = 0;
+	Serial.println("Fine setTimes: -----------------");
 }
-/*
-unsigned Scheduler::init(){
-	for(int i=0; i<nt; i++){
-		tasks[i].prec = tasks[i].time;
-	}
-}
-*/
+
 unsigned Scheduler::getTimebase(){
 	return tbase;
 }
-/*
-unsigned long Scheduler::getNsteps(){
-	return nsteps;
-}
-*/
+
 void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 	// max speed scheduled events
 	for(int j=0; j < tasks[nt-1].fe; j++){// only the first time
@@ -80,23 +73,21 @@ void Scheduler::scheduleAll(){// scheduler engine. Place this in loop().
 		for(int i=0; i < nt-1; i++){// all times except the first
 			//Serial.println("------------------------------------------");
 			//Serial.print("i: ");Serial.println(i);
-			//Serial.print("Steplist: ");
-			//Serial.println(tasks[i].step);
+			//Serial.print("time: ");
+			//Serial.println(tasks[i].time);
 			//if(!(step % tasks[i].step)){
-			if(prec - tasks[i].prec >= tasks[i].time){
-				tasks[i].prec += tasks[i].time;
-				//tasks[i].prec += tasks[i].time;
-				//Serial.print(" diff(");Serial.print(i);Serial.print(")");Serial.println(step - tasks[i].prec);
-				//tasks[i].prec += tasks[i].time;
-				//tasks[i].prec = prec;
+			//Serial.print("diff: ");Serial.println(prec - tasks[i].prec);
+			if(prec - tasks[i].prec > tasks[i].time){
+				tasks[i].prec += tasks[i].time; // aggiornamento prec del task
+				//Serial.print("time: ");Serial.println(tasks[i].time);
+				//Serial.print("diff: ");Serial.println(prec - tasks[i].prec);
+				//Serial.print("fe: ");Serial.println(tasks[i].fe);
 				//Serial.println("++++++++++++++++++++++++++++++++++++++");
 				for(int j=0; j < tasks[i].fe; j++){// fino all'ultimo della lista
-					//Serial.print(" j: ");
-					//Serial.println(j);
+					//Serial.print(" j: ");Serial.println(j);
 					if(tasks[i].events[j]->enabled)// se l'evento è abilitato
 						tasks[i].events[j]->doEvent(tasks[i].step);// event callback function call	
 				}
-					//tasks[i].prec += tasks[i].time;
 			}
 		}
 	}
@@ -291,20 +282,23 @@ int Scheduler::addTime(unsigned long when){
 		p = timeSearch(when, tasks);
 	}
 	*/
-	Serial.print("when: ");Serial.println(when);	
+	Serial.print("add time when: ");Serial.println(when);	
 	p = timeSearch(when, tasks);
-	Serial.print("pos1: ");Serial.println(p);	
+	Serial.print("add time pos: ");Serial.println(p);	
 	if(p<0){ // se non lo trova
 		if(nt < NTIMES){
 			tasks[nt].time = when; // lo inserisce
 			tasks[nt].elapsed = tasks[nt].time; // time init
 			tasks[nt].fe = 0; // reset first empty
 			tasks[nt].step = 1; 
-			//tasks[nt].prec = tasks[nt].time; // time init
+			tasks[nt].prec = tasks[nt].time; // time init
+			tasks[nt].prec = prec -tasks[nt].time; // time init
 			nt++;
 			timeSort(tasks); // ordina
+			setTimes();
 			p = timeSearch(when, tasks);
 		}
+		Serial.print("nt: ");Serial.println(nt);	
 	}
 	return p;
 }
@@ -312,27 +306,29 @@ int Scheduler::addTime(unsigned long when){
 bool Scheduler::delTime(unsigned long when){
 	int p = -1;
 
-	Serial.print("when: ");Serial.println(when);	
+	//Serial.print("when: ");Serial.println(when);	
 	p = timeSearch(when, tasks);
-	Serial.print("pos1: ");Serial.println(p);	
+	//Serial.print("pos1: ");Serial.println(p);	
 	return delTimeByPos(p);
 }
 // in posizione nt-1 ci sta sempre il tempo 0!
 bool Scheduler::delTimeByPos(int pos){
 	bool erased = false;
-	Serial.println("pos--");Serial.println(pos);
-	Serial.println("nt del");Serial.println(nt);
-	if(pos >= 0 && pos < nt-1 ){ // se è entro il range degli inseriti (nt è escluso perchè il tempo 0 non si deve cancellare)
+	//Serial.println("pos--");Serial.println(pos);
+	//Serial.println("nt del");Serial.println(nt);
+	if(pos >= 0 && pos < nt-1 && tasks[pos].fe == 0){ // se è entro il range degli inseriti (nt è escluso perchè il tempo 0 non si deve cancellare)
 		for(int i = pos; i+1 < nt; i++){
 			tasks[i] = tasks[i+1]; // cancellazione per spostamento a sin
+			//tasks[i].prec = 0; // time init
 		}
-		Serial.print("nt--: ");Serial.println(nt);
-	    Serial.println("Stampa tempi--: ");
-		if(nt > 0)
-			nt--;
-		for(int i=0; i<nt; i++) {
-			Serial.println(tasks[i].time);
-		}
+		//if(nt > 0)
+		nt--;
+		setTimes();
+		//Serial.print("nt--: ");Serial.println(nt);
+	    //Serial.println("Stampa tempi--: ");
+		//for(int i=0; i<nt; i++) {
+		//	Serial.println(tasks[i].time);
+		//}
 		erased = true;
 		Serial.println("Cancelled");
 	}
@@ -348,7 +344,6 @@ bool Scheduler::addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigne
 		//Serial.print("when: ");Serial.println(when);
 		//Serial.print("p add: ");Serial.println(p);
 		if(tasks[p].addEvent(new PeriodicEvnt(this, every, pevnt, priority, true, PERIODIC))){
-			setTimes();
 			if(!enabled)
 				tasks[p].disableEvent(priority);
 		}
@@ -356,11 +351,11 @@ bool Scheduler::addPeriodicEvent(PEventCallback pevnt, uint8_t priority, unsigne
 		ok = false;
 		Serial.println("ERRORE: indice di un tempo fuori range");
 	}
-	Serial.println("Inizio tempi add:");
+	Serial.println("Stampa tempi:");
 	for(int i=0; i<nt; i++) {
 		Serial.println(tasks[i].time);
 	}
-	Serial.println("Fine tempi add:");
+	Serial.println("Fine Stampa tempi:");
 	return ok;
 }
 
@@ -371,25 +366,14 @@ bool Scheduler::addAsyncEvent(PEventCallback pevnt, uint8_t priority, unsigned l
 	int p = addTime(every);
 	if(p>=0){
 		AsyncEvntB *slave = new AsyncEvntB(this, every, when, priority, pevnt, priority, true, ASYNC_B, howlong, every, repeat);
-		//p = addTime(every);
 		if(p>=0){
 			tasks[p].addEvent(slave); // add async event as disabled
-			//setTimes();
 		}
-		/*
-		PeriodicEvnt *dummy = new PeriodicEvnt(this, when+howlong, NULL, DISABLED-1, false, PERIODIC);// not enabled
-		p = addTime(when+howlong);
-		if(p>=0){
-			tasks[p].addEvent(dummy); // add async event as disabled
-			setTimes();
-		}
-		*/
 	}else{
 		ok = false;
 		Serial.println("ERRORE: indice di un tempo fuori range");
 	}
 	Serial.print("every: ");Serial.println(every);	
-	//Serial.print("dummy: ");Serial.println(when+howlong); 	
 	for(int i=0; i<nt; i++) {
 		Serial.println(tasks[i].time);
 	}
