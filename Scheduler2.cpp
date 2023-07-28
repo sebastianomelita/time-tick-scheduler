@@ -27,6 +27,7 @@ Scheduler::Scheduler(){
 	//step=0;
 	nt = 0;
 	timerFlag = false;
+	addTime(0);
 }
 
 long Scheduler::getTime(unsigned long when){
@@ -40,11 +41,13 @@ long Scheduler::getTime(unsigned long when){
 
 void Scheduler::setTimes(){
 	tbase = findGCD();
-	//Serial.print("mcm: ");Serial.println(mcm);
-	//Serial.print("tbase: ");Serial.println(tbase);
-	for(int i=0; i < nt-1; i++){
-		tasks[i].step = tasks[i].time / tbase; 
-		Serial.print("step: ");Serial.println(tasks[i].step);
+	Serial.print("mcm: ");Serial.println(mcm);
+	Serial.print("tbase: ");Serial.println(tbase);
+	for(int i=0; i < nt; i++){
+		if(tbase > 0){
+			tasks[i].step = tasks[i].time / tbase; 
+			Serial.print("step: ");Serial.println(tasks[i].step);
+		}
 	}
 	//maxstepCalc();
 }
@@ -318,7 +321,7 @@ bool Scheduler::delTimeByPos(int pos){
 	bool erased = false;
 	Serial.println("pos--");Serial.println(pos);
 	Serial.println("nt del");Serial.println(nt);
-	if(pos >= 0 && pos < nt){ // se è entro il range degli inseriti
+	if(pos >= 0 && pos < nt-1 ){ // se è entro il range degli inseriti (nt è escluso perchè il tempo 0 non si deve cancellare)
 		for(int i = pos; i+1 < nt; i++){
 			tasks[i] = tasks[i+1]; // cancellazione per spostamento a sin
 		}
@@ -484,11 +487,13 @@ unsigned long Scheduler::findGCD(){
   unsigned long mcd2 = tasks[0].time;
   mcm = tasks[0].time;
   //Serial.println("-----------------------------------------------");
-  for (uint8_t i = 1; i < nt-1; i++)
+  for (uint8_t i = 1; i < nt; i++)
   {
-	  mcd = gcd(tasks[i].time, mcd);
-	  mcd2 = gcd(tasks[i].time, mcm);
-	  mcm = lcm(tasks[i].time, mcm, mcd2);
+	  if(tasks[i].time != 0){
+		  mcd = gcd(tasks[i].time, mcd);
+		  mcd2 = gcd(tasks[i].time, mcm);
+		  mcm = lcm(tasks[i].time, mcm, mcd2);
+	  }
 	  //Serial.print("mcm ");Serial.println(mcm);
   }
   return mcd;
