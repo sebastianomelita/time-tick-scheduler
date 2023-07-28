@@ -4,6 +4,8 @@
 
 Task scheduler based on [time ticks](https://github.com/sebastianomelita/ArduinoBareMetal/blob/master/tasksched.md)
 
+This scheduler allows the dynamic **creation** and **deletion** **at runtime** of tasks, as well as the **enabling** and **disabling** of the same, always **at runtime**.
+
 Choose the various **times in play** in an appropriate manner, such as to allow easy automatic calculation of both the **base time** (so that it is not too small) and the **sentinel counters** of the time ticks of the events (multiples of the base time).
 
 **Events** can be **inserted**, associated with their times, **without** following a particular **order** of invocations using one of the two functions ```addPeriodicEvent()``` and ```addAsyncEvent()```.
