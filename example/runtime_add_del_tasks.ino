@@ -26,7 +26,7 @@ void onMaxSpeedEvents(){
 		//parsing di una stringa dal flusso di dati 
 		String str = Serial.readString();
 		//parsing di un comando (sottostringa) all'interno di una stringa	
-		if(str.indexOf("aggiungi")>=0){
+		if(str.indexOf("metti")>=0){
 			if(count < 3){
 				addflag = true;
 			}
