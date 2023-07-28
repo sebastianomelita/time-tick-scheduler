@@ -36,6 +36,8 @@ The library allows an **alternative** to **resampling in the loop(**) to compens
 - Simulation on ESP32 with Wokwi of **interrupt-scheduled tasks** in an ISR: https://wokwi.com/projects/353402752887006209
 
 - Simulation on ESP32 with Wokwi of **tasks scheduled via toggleEvent()**: https://wokwi.com/projects/353405525014893569
+  
+- Simulation on ESP32 with Wokwi ofi **tasks created and deleted dynamically at runtime**: https://wokwi.com/projects/371341648643932161
 
 ### **Methods** of class **```Scheduler()```**:
     		
