@@ -1,6 +1,6 @@
 /*
 Test del metodo deletePeriodicEvent(uint8_t priority, unsigned long every).
-Scrivere un programma che ascolti un input da seriale per due comandi "aggiungi"con il quale 
+Scrivere un programma che ascolti un input da seriale per due comandi "metti"con il quale 
 creare, in sequenza, 3 task diversi e  "togli" col il quale cancellare in sequenza 
 gli stessi task.
 */
