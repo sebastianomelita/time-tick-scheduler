@@ -49,9 +49,10 @@ La libreria permette un'**alternativa** al **ricampionamento nel loop(**) per co
 	- ```every```: slot temporale in cui l'evento deve essere ripetuto. La funzione definisce un nuovo slot se non esiste uno con un tempo uguale, oppure si limita ad associare l'evento ad uno slot esistente. In unione al campo priority **identifica** l'evento periodico.
 	- ```enabled```: se ```true``` (valore di default) l'evento è registrato e attivato, se se ```false``` l'evento è registrato ma non è attivato
 - **```bool addAsyncEvent(PEventCallback pevnt, uint8_t priority, unsigned long when, unsigned long howlong, unsigned long every, bool repeat)```**. Aggiunge un evento aperiodico definito in più da:
-	- ```when```: slot temporale in cui l'evento comincia. La funzione definisce un nuovo slot se non ne esiste uno con un tempo uguale, oppure si limita ad associare l'evento ad uno slot esistente. 
-	- ```howlong```: quanto tempo dura la schedulazione. Non viene definito un nuovo slot per questo tempo ma per il tempo every+howlong.
-	- ```every```: slot temporale in cui l'evento deve essere ripetuto. La funzione definisce un nuovo slot se non ne esiste uno con un tempo uguale, oppure si limita ad associare l'evento ad uno slot esistente. In unione al campo priority **identifica** l'evento aperiodico.
+	- ```when```: slot temporale in cui l'evento comincia. La funzione non definisce un nuovo slot, gestisce un timer aggiornato in poling con la periodicità dello slot ```every```.
+	- ```howlong```: quanto tempo dura la schedulazione. Non viene definito un nuovo slot per questo tempo ma soltanto per il tempo ```every```.
+	- ```every```: slot temporale **base** in cui l'evento deve essere **ripetuto** (periodicità base). La funzione definisce un nuovo slot se non ne esiste uno con un tempo uguale, oppure si limita ad associare l'evento ad uno slot esistente. In unione al campo priority **identifica** l'evento aperiodico. Per **cancellarlo**, l'evento si può individuare con la coppia (```priority```, ```every```).
+- **bool Scheduler::deletePeriodicEvent(uint8_t priority, unsigned long every, bool test)**. Cancella un evento periodico identificato in base alla sua priorità e alla sua periodicità base ```every```. cancella sia eventi periodici che asincroni.
 - **```void scheduleAll()```**. Esegue tutti i task. Da inserire nel loop() o in una callback richiamata ad intervalli regolari.
 - **```unsigned getTimebase()```**. Restituisce il tempo base dei time tick.
 - **```long getTime(unsigned long when)```**. Restituisce il conteggio in time tick del tempo fornito come parametro.
