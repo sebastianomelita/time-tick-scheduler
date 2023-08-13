@@ -41,6 +41,8 @@ La libreria permette un'**alternativa** al **ricampionamento nel loop(**) per co
 
 - Simulazione su ESP32 con Wokwi di **task creati e cancellati dinamicamente a runtime**: https://wokwi.com/projects/371341648643932161
 
+-  Simulazione su ESP32 con Wokwi di **gestione a runtime dello stato dei task**:https://wokwi.com/projects/371341648643932161
+
 
 ### **Metodi** della classe **```Scheduler()```**:		
     		
